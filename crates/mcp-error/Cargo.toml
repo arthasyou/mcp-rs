@@ -1,0 +1,11 @@
+[package]
+name = "mcp-error"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Error types for Model Context Protocol"
+
+[dependencies]
+thiserror.workspace = true
+url.workspace = true
