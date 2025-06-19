@@ -1,7 +1,7 @@
 use std::io;
 
 use async_trait::async_trait;
-use mcp_core::protocol::JsonRpcMessage;
+use mcp_core::protocol::message::JsonRpcMessage;
 use mcp_error::{Error, Result};
 use tokio::sync::mpsc::UnboundedSender;
 

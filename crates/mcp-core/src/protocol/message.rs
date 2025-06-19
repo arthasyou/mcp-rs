@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use crate::protocol::error::ErrorData;
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct JsonRpcRequest {
     pub jsonrpc: String,
@@ -49,18 +51,18 @@ pub enum JsonRpcMessage {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct JsonRpcRaw {
-    jsonrpc: String,
+pub struct JsonRpcRaw {
+    pub jsonrpc: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    id: Option<u64>,
+    pub id: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    method: Option<String>,
+    pub method: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    params: Option<Value>,
+    pub params: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    result: Option<Value>,
+    pub result: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    error: Option<ErrorData>,
+    pub error: Option<ErrorData>,
 }
 
 impl TryFrom<JsonRpcRaw> for JsonRpcMessage {
@@ -114,80 +116,5 @@ impl TryFrom<JsonRpcRaw> for JsonRpcMessage {
             "Invalid JSON-RPC message format: id={:?}, method={:?}, result={:?}, error={:?}",
             raw.id, raw.method, raw.result, raw.error
         ))
-    }
-}
-
-// Standard JSON-RPC error codes
-pub const PARSE_ERROR: i32 = -32700;
-pub const INVALID_REQUEST: i32 = -32600;
-pub const METHOD_NOT_FOUND: i32 = -32601;
-pub const INVALID_PARAMS: i32 = -32602;
-pub const INTERNAL_ERROR: i32 = -32603;
-
-/// Error information for JSON-RPC error responses.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub struct ErrorData {
-    /// The error type that occurred.
-    pub code: i32,
-
-    /// A short description of the error. The message SHOULD be limited to a concise single
-    /// sentence.
-    pub message: String,
-
-    /// Additional information about the error. The value of this member is defined by the
-    /// sender (e.g. detailed error information, nested errors etc.).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub data: Option<Value>,
-}
-
-#[cfg(test)]
-mod tests {
-    use serde_json::json;
-
-    use super::*;
-
-    #[test]
-    fn test_notification_conversion() {
-        let raw = JsonRpcRaw {
-            jsonrpc: "2.0".to_string(),
-            id: None,
-            method: Some("notify".to_string()),
-            params: Some(json!({"key": "value"})),
-            result: None,
-            error: None,
-        };
-
-        let message = JsonRpcMessage::try_from(raw).unwrap();
-        match message {
-            JsonRpcMessage::Notification(n) => {
-                assert_eq!(n.jsonrpc, "2.0");
-                assert_eq!(n.method, "notify");
-                assert_eq!(n.params.unwrap(), json!({"key": "value"}));
-            }
-            _ => panic!("Expected Notification"),
-        }
-    }
-
-    #[test]
-    fn test_request_conversion() {
-        let raw = JsonRpcRaw {
-            jsonrpc: "2.0".to_string(),
-            id: Some(1),
-            method: Some("request".to_string()),
-            params: Some(json!({"key": "value"})),
-            result: None,
-            error: None,
-        };
-
-        let message = JsonRpcMessage::try_from(raw).unwrap();
-        match message {
-            JsonRpcMessage::Request(r) => {
-                assert_eq!(r.jsonrpc, "2.0");
-                assert_eq!(r.id, Some(1));
-                assert_eq!(r.method, "request");
-                assert_eq!(r.params.unwrap(), json!({"key": "value"}));
-            }
-            _ => panic!("Expected Request"),
-        }
     }
 }

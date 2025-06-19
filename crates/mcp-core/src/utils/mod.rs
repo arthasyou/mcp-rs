@@ -1,6 +1,6 @@
 use mcp_error::{Error, Result};
 
-use crate::protocol::JsonRpcMessage;
+use crate::protocol::message::JsonRpcMessage;
 
 const JSONRPC_VERSION_FIELD: &str = "jsonrpc";
 const JSONRPC_EXPECTED_VERSION: &str = "2.0";

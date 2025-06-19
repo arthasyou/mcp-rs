@@ -1,4 +1,7 @@
-use mcp_core::protocol::{JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse};
+use mcp_core::protocol::{
+    error::{ErrorData, INTERNAL_ERROR, INVALID_REQUEST, PARSE_ERROR},
+    message::{JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse},
+};
 use mcp_error::{BoxError, Error, Result};
 use mcp_transport::server::traits::ServerTransport;
 use tower_service::Service;
@@ -79,8 +82,8 @@ where
                     jsonrpc: "2.0".to_string(),
                     id,
                     result: None,
-                    error: Some(mcp_core::protocol::ErrorData {
-                        code: mcp_core::protocol::INTERNAL_ERROR,
+                    error: Some(ErrorData {
+                        code: mcp_core::protocol::error::INTERNAL_ERROR,
                         message: error_msg,
                         data: None,
                     }),
@@ -109,18 +112,18 @@ where
 
     async fn handle_error(transport: &mut impl ServerTransport, e: Error) -> Result<()> {
         let error = match e {
-            Error::Json(_) | Error::InvalidMessage(_) => mcp_core::protocol::ErrorData {
-                code: mcp_core::protocol::PARSE_ERROR,
+            Error::Json(_) | Error::InvalidMessage(_) => ErrorData {
+                code: PARSE_ERROR,
                 message: e.to_string(),
                 data: None,
             },
-            Error::Protocol(_) => mcp_core::protocol::ErrorData {
-                code: mcp_core::protocol::INVALID_REQUEST,
+            Error::Protocol(_) => ErrorData {
+                code: INVALID_REQUEST,
                 message: e.to_string(),
                 data: None,
             },
-            _ => mcp_core::protocol::ErrorData {
-                code: mcp_core::protocol::INTERNAL_ERROR,
+            _ => ErrorData {
+                code: INTERNAL_ERROR,
                 message: e.to_string(),
                 data: None,
             },

@@ -2,13 +2,15 @@ use std::{future::Future, pin::Pin};
 
 use mcp_core::{
     ResourceContents,
-    capabilities::ServerCapabilities,
     content::Content,
     prompt::{Prompt, PromptMessage, PromptMessageRole},
-    protocol::{JsonRpcRequest, JsonRpcResponse},
-    result::{
-        CallToolResult, GetPromptResult, Implementation, InitializeResult, ListPromptsResult,
-        ListResourcesResult, ListToolsResult, ReadResourceResult,
+    protocol::{
+        capabilities::ServerCapabilities,
+        message::{JsonRpcRequest, JsonRpcResponse},
+        result::{
+            CallToolResult, GetPromptResult, Implementation, InitializeResult, ListPromptsResult,
+            ListResourcesResult, ListToolsResult, ReadResourceResult,
+        },
     },
 };
 use mcp_error::{Error, Result};

@@ -3,7 +3,10 @@ use std::{
     task::{Context, Poll},
 };
 
-use mcp_core::protocol::{ErrorData, INVALID_REQUEST, JsonRpcRequest, JsonRpcResponse};
+use mcp_core::protocol::{
+    error::{ErrorData, INVALID_REQUEST},
+    message::{JsonRpcRequest, JsonRpcResponse},
+};
 use mcp_error::BoxError;
 use tower_service::Service;
 

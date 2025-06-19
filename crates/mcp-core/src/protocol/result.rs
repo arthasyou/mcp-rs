@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     Resource, ResourceContents, Tool,
-    capabilities::ServerCapabilities,
     content::Content,
     prompt::{Prompt, PromptMessage},
+    protocol::capabilities::ServerCapabilities,
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

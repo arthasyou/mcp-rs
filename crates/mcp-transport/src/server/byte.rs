@@ -5,7 +5,7 @@ use std::{
 
 use async_trait::async_trait;
 use futures::{Stream, stream::StreamExt};
-use mcp_core::{protocol::JsonRpcMessage, utils::parse_json_rpc_message};
+use mcp_core::{protocol::message::JsonRpcMessage, utils::parse_json_rpc_message};
 use mcp_error::{Error, Result};
 use pin_project::pin_project;
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader};
