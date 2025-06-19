@@ -19,6 +19,9 @@ pub enum Error {
     #[error("Invalid UTF-8 sequence: {0}")]
     Utf8(#[from] std::string::FromUtf8Error),
 
+    #[error("Protocol error: {0}")]
+    Protocol(String),
+
     #[error("invalid parameters: {0}")]
     InvalidParameters(String),
 
@@ -27,3 +30,5 @@ pub enum Error {
 }
 
 pub type Result<T> = core::result::Result<T, Error>;
+
+pub type BoxError = Box<dyn std::error::Error + Sync + Send>;
