@@ -4,7 +4,8 @@ use std::{
 };
 
 use mcp_core::protocol::{
-    error::{ErrorData, INVALID_REQUEST},
+    constants::INVALID_REQUEST,
+    error::ErrorData,
     message::{JsonRpcRequest, JsonRpcResponse},
 };
 use mcp_error::BoxError;

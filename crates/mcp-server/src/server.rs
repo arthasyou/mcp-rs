@@ -1,5 +1,6 @@
 use mcp_core::protocol::{
-    error::{ErrorData, INTERNAL_ERROR, INVALID_REQUEST, PARSE_ERROR},
+    constants::{INTERNAL_ERROR, INVALID_REQUEST, PARSE_ERROR},
+    error::ErrorData,
     message::{JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse},
 };
 use mcp_error::{BoxError, Error, Result};
@@ -83,7 +84,7 @@ where
                     id,
                     result: None,
                     error: Some(ErrorData {
-                        code: mcp_core::protocol::error::INTERNAL_ERROR,
+                        code: INTERNAL_ERROR,
                         message: error_msg,
                         data: None,
                     }),
