@@ -5,6 +5,7 @@ pub mod protocol;
 pub mod resource;
 pub mod role;
 pub mod tool;
+pub mod utils;
 
 pub use annotation::Annotation;
 pub use resource::{MimeType, Resource, ResourceContents};

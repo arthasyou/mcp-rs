@@ -3,14 +3,14 @@ use std::{
     task::{Context, Poll},
 };
 
-use futures::Stream;
-use mcp_core::protocol::JsonRpcMessage;
+use async_trait::async_trait;
+use futures::{Stream, stream::StreamExt};
+use mcp_core::{protocol::JsonRpcMessage, utils::parse_json_rpc_message};
 use mcp_error::{Error, Result};
 use pin_project::pin_project;
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader};
 
-const JSONRPC_VERSION_FIELD: &str = "jsonrpc";
-const JSONRPC_EXPECTED_VERSION: &str = "2.0";
+use crate::server::traits::ServerTransport;
 
 #[pin_project]
 /// A transport that reads and writes JSON-RPC messages over byte streams.
@@ -68,43 +68,22 @@ where
     }
 }
 
-/// Parses a JSON-RPC message from a string, validating structure and version.
-fn parse_json_rpc_message(line: &str) -> Result<JsonRpcMessage> {
-    let value: serde_json::Value = serde_json::from_str(line)?;
-    if !value.is_object() {
-        return Err(Error::InvalidMessage(
-            "Message must be a JSON object".into(),
-        ));
-    }
-    let obj = value.as_object().unwrap();
-
-    match obj.get(JSONRPC_VERSION_FIELD) {
-        Some(serde_json::Value::String(v)) if v == JSONRPC_EXPECTED_VERSION => {}
-        _ => {
-            return Err(Error::InvalidMessage(
-                "Missing or invalid jsonrpc version".into(),
-            ));
-        }
-    }
-
-    let msg = serde_json::from_value(value)?;
-    Ok(msg)
-}
-
-impl<R, W> ByteTransport<R, W>
+#[async_trait]
+impl<R, W> ServerTransport for ByteTransport<R, W>
 where
-    R: AsyncRead + Unpin,
-    W: AsyncWrite + Unpin,
+    R: AsyncRead + Unpin + Send + Sync,
+    W: AsyncWrite + Unpin + Send + Sync,
 {
-    /// Writes a JSON-RPC message to the underlying writer.
-    pub async fn write_message(self: &mut Pin<&mut Self>, msg: JsonRpcMessage) -> Result<()> {
-        let json = serde_json::to_string(&msg)?;
+    async fn read_message(&mut self) -> Option<Result<JsonRpcMessage>> {
+        self.next().await
+    }
 
-        let mut this = self.as_mut().project();
+    async fn write_message(&mut self, msg: JsonRpcMessage) -> Result<()> {
+        let mut this = Pin::new(self).project();
+        let json = serde_json::to_string(&msg)?;
         this.writer.write_all(json.as_bytes()).await?;
         this.writer.write_all(b"\n").await?;
         this.writer.flush().await?;
-
         Ok(())
     }
 }
