@@ -16,10 +16,13 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 bytes = "1"
 thiserror = "2"
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1", features = ["full", "io-util"] }
 once_cell = "1"
 uuid = { version = "1.17", features = ["v4"] }
+futures = "0.3"
 futures-util = "0.3"
 chrono = { version = "0.4", features = ["serde"] }
 url = "2"
 base64 = "0.22"
+pin-project = "1"
+tracing = { version = "0.1", features = ["std"] }

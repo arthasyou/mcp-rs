@@ -99,7 +99,7 @@ impl Resource {
             ann.update_timestamp();
             Ok(())
         } else {
-            Err(Error::SystemError("Missing annotation".into()))
+            Err(Error::System("Missing annotation".into()))
         }
     }
 

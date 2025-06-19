@@ -9,3 +9,4 @@ description = "Error types for Model Context Protocol"
 [dependencies]
 thiserror.workspace = true
 url.workspace = true
+serde_json.workspace = true

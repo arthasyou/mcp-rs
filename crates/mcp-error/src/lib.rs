@@ -8,13 +8,22 @@ pub enum Error {
     Io(#[from] io::Error),
 
     #[error("url error: {0}")]
-    UrlError(#[from] url::ParseError),
+    Url(#[from] url::ParseError),
+
+    #[error("serde_json error: {0}")]
+    Json(#[from] serde_json::Error),
 
     #[error("system error: {0}")]
-    SystemError(String),
+    System(String),
+
+    #[error("Invalid UTF-8 sequence: {0}")]
+    Utf8(#[from] std::string::FromUtf8Error),
 
     #[error("invalid parameters: {0}")]
     InvalidParameters(String),
+
+    #[error("Invalid message format: {0}")]
+    InvalidMessage(String),
 }
 
 pub type Result<T> = core::result::Result<T, Error>;
