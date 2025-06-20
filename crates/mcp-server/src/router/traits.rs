@@ -39,12 +39,7 @@ pub trait Router: Send + Sync + 'static {
 
     // Helper method to create base response
     fn create_response(&self, id: Option<u64>) -> JsonRpcResponse {
-        JsonRpcResponse {
-            jsonrpc: "2.0".to_string(),
-            id,
-            result: None,
-            error: None,
-        }
+        JsonRpcResponse::new_empty(id)
     }
 
     fn handle_initialize(
@@ -54,7 +49,7 @@ pub trait Router: Send + Sync + 'static {
         async move {
             let result = InitializeResult {
                 protocol_version: "2024-11-05".to_string(),
-                capabilities: self.capabilities().clone(),
+                capabilities: self.capabilities(),
                 server_info: Implementation {
                     name: self.name(),
                     version: env!("CARGO_PKG_VERSION").to_string(),
