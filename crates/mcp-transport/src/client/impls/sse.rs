@@ -5,16 +5,13 @@ use eventsource_client::{Client as SseClient, SSE};
 use futures::TryStreamExt;
 use mcp_core::protocol::message::JsonRpcMessage;
 use mcp_error::{Error, Result};
-use serde_json::{self, json};
+use serde_json::{self};
 use service_utils_rs::utils::Request;
 use tokio::{spawn, sync::RwLock};
 use tracing::{self, warn};
 use url::Url;
 
-use crate::client::{
-    message::PendingRequests,
-    traits::{ClientTransport, send_message},
-};
+use crate::client::{message::PendingRequests, traits::ClientTransport};
 
 pub struct SseTransport {
     sse_url: String,
