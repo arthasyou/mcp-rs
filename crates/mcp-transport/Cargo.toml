@@ -15,3 +15,6 @@ futures.workspace = true
 serde_json.workspace = true
 tracing.workspace = true
 async-trait.workspace = true
+service_utils_rs = { workspace = true }
+eventsource-client.workspace = true
+url.workspace = true

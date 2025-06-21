@@ -1,6 +1,8 @@
 pub const JSONRPC_VERSION_FIELD: &str = "jsonrpc";
 pub const JSONRPC_EXPECTED_VERSION: &str = "2.0";
 
+pub const PROTOCOL_VERSION: &str = "2024-11-05";
+
 // Standard JSON-RPC error codes
 pub const PARSE_ERROR: i32 = -32700;
 pub const INVALID_REQUEST: i32 = -32600;

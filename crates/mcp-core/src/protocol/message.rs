@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::protocol::error::ErrorData;
+use crate::protocol::{constants::JSONRPC_VERSION_FIELD, error::ErrorData};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct JsonRpcRequest {
@@ -22,6 +22,26 @@ pub struct JsonRpcResponse {
     pub result: Option<Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error: Option<ErrorData>,
+}
+
+impl JsonRpcResponse {
+    pub fn new_empty(id: Option<u64>) -> Self {
+        Self {
+            jsonrpc: JSONRPC_VERSION_FIELD.to_string(),
+            id,
+            result: None,
+            error: None,
+        }
+    }
+
+    pub fn with_error(id: Option<u64>, error: ErrorData) -> Self {
+        Self {
+            jsonrpc: JSONRPC_VERSION_FIELD.to_string(),
+            id,
+            result: None,
+            error: Some(error),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

@@ -27,6 +27,27 @@ pub enum Error {
 
     #[error("Invalid message format: {0}")]
     InvalidMessage(String),
+
+    #[error("Transport was not connected or is already closed")]
+    NotConnected,
+
+    #[error("Channel closed")]
+    ChannelClosed,
+
+    #[error("Unsupported message type. JsonRpcMessage can only be Request or Notification.")]
+    UnsupportedMessage,
+
+    #[error("Stdio process error: {0}")]
+    StdioProcessError(String),
+
+    #[error("SSE connection error: {0}")]
+    SseConnection(String),
+
+    #[error("HTTP error: {status} - {message}")]
+    HttpError { status: u16, message: String },
+
+    #[error("config error: {0}")]
+    ServiceError(#[from] service_utils_rs::error::Error),
 }
 
 pub type Result<T> = core::result::Result<T, Error>;

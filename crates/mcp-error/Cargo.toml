@@ -10,3 +10,4 @@ description = "Error types for Model Context Protocol"
 thiserror.workspace = true
 url.workspace = true
 serde_json.workspace = true
+service_utils_rs.workspace = true
