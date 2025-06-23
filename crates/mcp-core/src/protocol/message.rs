@@ -4,6 +4,16 @@ use serde_json::Value;
 use crate::protocol::{constants::JSONRPC_VERSION_FIELD, error::ErrorData};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(untagged, try_from = "JsonRpcRaw")]
+pub enum JsonRpcMessage {
+    Request(JsonRpcRequest),
+    Response(JsonRpcResponse),
+    Notification(JsonRpcNotification),
+    Error(JsonRpcError),
+    Nil, // used to respond to notifications
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct JsonRpcRequest {
     pub jsonrpc: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -58,16 +68,6 @@ pub struct JsonRpcError {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<u64>,
     pub error: ErrorData,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(untagged, try_from = "JsonRpcRaw")]
-pub enum JsonRpcMessage {
-    Request(JsonRpcRequest),
-    Response(JsonRpcResponse),
-    Notification(JsonRpcNotification),
-    Error(JsonRpcError),
-    Nil, // used to respond to notifications
 }
 
 #[derive(Debug, Serialize, Deserialize)]
