@@ -20,3 +20,12 @@ mcp-server = { path = "../../crates/mcp-server" }
 mcp-error = { path = "../../crates/mcp-error" }
 mcp-transport = { path = "../../crates/mcp-transport" }
 tokio-util = { version = "0.7" }
+tokio-stream = { version = "0.1", features = ["sync"] }
+
+[[example]]
+name = "axum"
+path = "src/axum.rs"
+
+[[example]]
+name = "sse_axum"
+path = "src/sse_axum.rs"

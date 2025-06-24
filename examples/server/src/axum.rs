@@ -1,5 +1,3 @@
-mod common;
-
 use std::{collections::HashMap, sync::Arc};
 
 use axum::{
@@ -10,18 +8,16 @@ use axum::{
     response::{Sse, sse::Event},
     routing::get,
 };
-use common::jsonrpc_frame_codec::JsonRpcFrameCodec;
 use futures::{Stream, StreamExt, TryStreamExt};
 use mcp_server::{router::service::RouterService, server::Server};
 use mcp_transport::server::ByteTransport;
+use server::common::{counter, jsonrpc_frame_codec::JsonRpcFrameCodec};
 use tokio::{
     io::{self, AsyncWriteExt, DuplexStream},
     sync::{Mutex, oneshot},
 };
 use tokio_util::codec::FramedRead;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-
-use crate::common::counter;
 
 type C2SWriter = Arc<Mutex<DuplexStream>>;
 type SessionId = Arc<str>;

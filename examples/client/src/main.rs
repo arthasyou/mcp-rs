@@ -21,6 +21,7 @@ async fn main() {
 
     let transport = SseTransport::new("http://localhost:18000/sse");
     transport.start().await.unwrap();
+    debug!("Starting MCP Client Example");
     // sleep(std::time::Duration::from_secs(1)); // Wait for the transport to start
     let mut client = McpClient::new(transport);
     let message = JsonRpcMessage::Request(JsonRpcRequest {
