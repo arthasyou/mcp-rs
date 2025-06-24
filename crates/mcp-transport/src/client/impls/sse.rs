@@ -40,13 +40,23 @@ impl SseTransport {
         }
     }
 
-    pub async fn get_post_endpoint(&self) -> Result<String> {
+    async fn get_post_endpoint(&self) -> Result<String> {
         let guard = self.post_endpoint.read().await;
         match &*guard {
             Some(endpoint) => Ok(endpoint.clone()),
             None => Err(Error::System(
                 "POST endpoint not discovered yet".to_string(),
             )),
+        }
+    }
+
+    async fn wait_until_post_endpoint_ready(&self) -> Result<String> {
+        loop {
+            if let Ok(endpoint) = self.get_post_endpoint().await {
+                return Ok(endpoint);
+            }
+            // sleep 可以防止 busy loop
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
         }
     }
 }
@@ -60,10 +70,12 @@ impl ClientTransport for SseTransport {
         let shutdown = self.shutdown.clone();
         spawn(async move {
             tokio::select! {
-                _ = handle_messages(sse_url, pending_requests, post_endpoint, shutdown.clone()) => {},
+                _ = handle_messages_loop(sse_url, pending_requests, post_endpoint, shutdown.clone()) => {},
                 _ = shutdown.cancelled() => {},
             }
         });
+
+        self.wait_until_post_endpoint_ready().await?;
 
         Ok(())
     }
@@ -108,7 +120,36 @@ impl Drop for SseTransport {
     }
 }
 
-async fn handle_messages(
+async fn handle_messages_loop(
+    sse_url: String,
+    pending_requests: Arc<PendingRequests>,
+    post_endpoint: Arc<RwLock<Option<String>>>,
+    shutdown: CancellationToken,
+) {
+    loop {
+        let result = handle_messages_once(
+            sse_url.clone(),
+            pending_requests.clone(),
+            post_endpoint.clone(),
+            shutdown.clone(),
+        )
+        .await;
+
+        if shutdown.is_cancelled() {
+            break;
+        }
+
+        if let Err(e) = result {
+            warn!("SSE connection failed: {e}, retrying in 3s...");
+        } else {
+            warn!("SSE handler exited unexpectedly, retrying in 3s...");
+        }
+
+        tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+    }
+}
+
+async fn handle_messages_once(
     sse_url: String,
     pending_requests: Arc<PendingRequests>,
     post_endpoint: Arc<RwLock<Option<String>>>,

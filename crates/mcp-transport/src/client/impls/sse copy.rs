@@ -11,6 +11,7 @@ use tokio::{
     spawn,
     sync::{RwLock, oneshot},
 };
+use tokio_util::sync::CancellationToken;
 use tracing::{self, warn};
 use url::Url;
 
@@ -21,6 +22,7 @@ pub struct SseTransport {
     post_endpoint: Arc<RwLock<Option<String>>>,
     pending_requests: Arc<PendingRequests>,
     request: Request,
+    shutdown: CancellationToken,
 }
 
 impl SseTransport {
@@ -34,16 +36,27 @@ impl SseTransport {
             post_endpoint: Arc::new(RwLock::new(None)),
             pending_requests: Arc::new(PendingRequests::default()),
             request,
+            shutdown: CancellationToken::new(),
         }
     }
 
-    pub async fn get_post_endpoint(&self) -> Result<String> {
+    async fn get_post_endpoint(&self) -> Result<String> {
         let guard = self.post_endpoint.read().await;
         match &*guard {
             Some(endpoint) => Ok(endpoint.clone()),
             None => Err(Error::System(
                 "POST endpoint not discovered yet".to_string(),
             )),
+        }
+    }
+
+    async fn wait_until_post_endpoint_ready(&self) -> Result<String> {
+        loop {
+            if let Ok(endpoint) = self.get_post_endpoint().await {
+                return Ok(endpoint);
+            }
+            // sleep 可以防止 busy loop
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
         }
     }
 }
@@ -54,9 +67,15 @@ impl ClientTransport for SseTransport {
         let sse_url = self.sse_url.clone();
         let pending_requests = self.pending_requests.clone();
         let post_endpoint = self.post_endpoint.clone();
+        let shutdown = self.shutdown.clone();
         spawn(async move {
-            handle_messages(sse_url, pending_requests, post_endpoint).await;
+            tokio::select! {
+                _ = handle_messages(sse_url, pending_requests, post_endpoint, shutdown.clone()) => {},
+                _ = shutdown.cancelled() => {},
+            }
         });
+
+        self.wait_until_post_endpoint_ready().await?;
 
         Ok(())
     }
@@ -90,8 +109,14 @@ impl ClientTransport for SseTransport {
     }
 
     async fn close(&self) -> Result<()> {
-        // Implementation for closing the SSE transport
+        self.shutdown.cancel();
         Ok(())
+    }
+}
+
+impl Drop for SseTransport {
+    fn drop(&mut self) {
+        self.shutdown.cancel();
     }
 }
 
@@ -99,13 +124,14 @@ async fn handle_messages(
     sse_url: String,
     pending_requests: Arc<PendingRequests>,
     post_endpoint: Arc<RwLock<Option<String>>>,
-) {
+    shutdown: CancellationToken,
+) -> Result<()> {
     let client = match eventsource_client::ClientBuilder::for_url(&sse_url) {
         Ok(builder) => builder.build(),
         Err(e) => {
             pending_requests.clear().await;
             warn!("Failed to connect SSE client: {}", e);
-            return;
+            return Ok(());
         }
     };
     let mut stream = client.stream();
@@ -129,36 +155,47 @@ async fn handle_messages(
     }
 
     // Now handle subsequent events
-    while let Ok(Some(event)) = stream.try_next().await {
-        match event {
-            SSE::Event(e) if e.event_type == "message" => {
-                // Attempt to parse the SSE data as a JsonRpcMessage
-                match serde_json::from_str::<JsonRpcMessage>(&e.data) {
-                    Ok(message) => {
-                        match &message {
-                            JsonRpcMessage::Response(response) => {
-                                if let Some(id) = &response.id {
-                                    pending_requests.respond(&id.to_string(), message).await;
+    loop {
+        tokio::select! {
+            maybe_event = stream.try_next() => {
+                match maybe_event {
+                    Ok(Some(SSE::Event(e))) if e.event_type == "message" => {
+                        match serde_json::from_str::<JsonRpcMessage>(&e.data) {
+                            Ok(message) => {
+                                match &message {
+                                    JsonRpcMessage::Response(response) => {
+                                        if let Some(id) = &response.id {
+                                            pending_requests.respond(&id.to_string(), message).await;
+                                        }
+                                    }
+                                    JsonRpcMessage::Error(error) => {
+                                        if let Some(id) = &error.id {
+                                            pending_requests.respond(&id.to_string(), message).await;
+                                        }
+                                    }
+                                    _ => {}
                                 }
                             }
-                            JsonRpcMessage::Error(error) => {
-                                if let Some(id) = &error.id {
-                                    pending_requests.respond(&id.to_string(), message).await;
-                                }
+                            Err(err) => {
+                                warn!("Failed to parse SSE message: {err}");
                             }
-                            _ => {} // TODO: Handle other variants (Request, etc.)
                         }
                     }
-                    Err(err) => {
-                        warn!("Failed to parse SSE message: {err}");
+                    Ok(Some(_)) => continue,
+                    Ok(None) | Err(_) => {
+                        tracing::error!("SSE stream ended or errored");
+                        break;
                     }
                 }
+            },
+            _ = shutdown.cancelled() => {
+                tracing::info!("SSE handler received shutdown");
+                break;
             }
-            _ => { /* ignore other events */ }
         }
     }
 
-    // SSE stream ended or errored; signal any pending requests
-    tracing::error!("SSE stream ended or encountered an error; clearing pending requests.");
     pending_requests.clear().await;
+
+    Ok(())
 }
