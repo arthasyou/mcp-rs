@@ -1,4 +1,4 @@
-use mcp_error::{Error, Result};
+use mcp_error_rs::{Error, Result};
 
 use crate::protocol::{
     constants::{JSONRPC_EXPECTED_VERSION, JSONRPC_VERSION_FIELD},

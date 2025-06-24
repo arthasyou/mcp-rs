@@ -1,5 +1,5 @@
 [package]
-name = "mcp-macros"
+name = "mcp-macros-rs"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

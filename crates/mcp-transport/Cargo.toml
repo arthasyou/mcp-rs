@@ -1,13 +1,13 @@
 [package]
-name = "mcp-transport"
+name = "mcp-transport-rs"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
 
 [dependencies]
-mcp-core = { path = "../mcp-core" }
-mcp-error = { path = "../mcp-error" }
+mcp-core-rs = { path = "../mcp-core" }
+mcp-error-rs = { path = "../mcp-error" }
 
 pin-project.workspace = true
 tokio = { workspace = true, features = ["full", "io-util"] }

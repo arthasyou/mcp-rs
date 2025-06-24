@@ -14,8 +14,8 @@ rand = { version = "0.9", features = ["std"] }
 serde.workspace = true
 futures.workspace = true
 serde_json.workspace = true
-mcp-core = { path = "../../crates/mcp-core" }
-mcp-client = { path = "../../crates/mcp-client" }
-mcp-error = { path = "../../crates/mcp-error" }
-mcp-transport = { path = "../../crates/mcp-transport" }
+mcp-core-rs = { path = "../../crates/mcp-core" }
+mcp-client-rs = { path = "../../crates/mcp-client" }
+mcp-error-rs = { path = "../../crates/mcp-error" }
+mcp-transport-rs = { path = "../../crates/mcp-transport" }
 tokio-util = { version = "0.7" }

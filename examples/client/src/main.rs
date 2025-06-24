@@ -1,6 +1,6 @@
-use mcp_client::client::McpClient;
-use mcp_core::protocol::message::JsonRpcRequest;
-use mcp_transport::client::{impls::sse::SseTransport, traits::ClientTransport};
+use mcp_client_rs::client::McpClient;
+use mcp_core_rs::protocol::message::JsonRpcRequest;
+use mcp_transport_rs::client::{impls::sse::SseTransport, traits::ClientTransport};
 use serde_json::json;
 use tracing::debug;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};

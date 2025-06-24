@@ -9,6 +9,7 @@ license = "MIT"
 repository = "https://github.com/arthasyou/mcp-rs"
 description = "Rust MCP"
 
+
 [workspace.dependencies]
 async-trait = "0.1"
 serde = { version = "1", features = ["derive"] }

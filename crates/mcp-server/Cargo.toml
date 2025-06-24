@@ -1,14 +1,15 @@
 [package]
-name = "mcp-server"
+name = "mcp-server-rs"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+publish = true
 
 [dependencies]
-mcp-core = { path = "../mcp-core" }
-mcp-error = { path = "../mcp-error" }
-mcp-transport = { path = "../mcp-transport" }
+mcp-core-rs = { path = "../mcp-core" }
+mcp-error-rs = { path = "../mcp-error" }
+mcp-transport-rs = { path = "../mcp-transport" }
 
 tower-service.workspace = true
 tracing.workspace = true

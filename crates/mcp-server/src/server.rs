@@ -1,10 +1,10 @@
-use mcp_core::protocol::{
+use mcp_core_rs::protocol::{
     constants::{INTERNAL_ERROR, INVALID_REQUEST, PARSE_ERROR},
     error::ErrorData,
     message::{JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse},
 };
-use mcp_error::{BoxError, Error, Result};
-use mcp_transport::server::traits::ServerTransport;
+use mcp_error_rs::{BoxError, Error, Result};
+use mcp_transport_rs::server::traits::ServerTransport;
 use tower_service::Service;
 
 pub struct Server<S> {

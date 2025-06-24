@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use mcp_error::{Error, Result};
+use mcp_error_rs::{Error, Result};
 use serde::{Deserialize, Serialize};
 use url::Url;
 

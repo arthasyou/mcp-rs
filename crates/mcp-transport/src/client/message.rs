@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use mcp_core::protocol::message::JsonRpcMessage;
+use mcp_core_rs::protocol::message::JsonRpcMessage;
 use tokio::sync::{RwLock, oneshot};
 
 /// A message that can be sent through the transport

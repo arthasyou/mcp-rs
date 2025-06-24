@@ -1,4 +1,4 @@
-use mcp_core::protocol::capabilities::{
+use mcp_core_rs::protocol::capabilities::{
     PromptsCapability, ResourcesCapability, ServerCapabilities, ToolsCapability,
 };
 

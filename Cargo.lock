@@ -234,10 +234,10 @@ name = "client"
 version = "0.1.0"
 dependencies = [
  "futures",
- "mcp-client",
- "mcp-core",
- "mcp-error",
- "mcp-transport",
+ "mcp-client-rs",
+ "mcp-core-rs",
+ "mcp-error-rs",
+ "mcp-transport-rs",
  "rand 0.9.1",
  "serde",
  "serde_json",
@@ -1088,26 +1088,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
 
 [[package]]
-name = "mcp-client"
+name = "mcp-client-rs"
 version = "0.1.0"
 dependencies = [
  "futures",
- "mcp-core",
- "mcp-error",
- "mcp-transport",
+ "mcp-core-rs",
+ "mcp-error-rs",
+ "mcp-transport-rs",
  "serde_json",
  "tower-service",
  "tracing",
 ]
 
 [[package]]
-name = "mcp-core"
+name = "mcp-core-rs"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
  "chrono",
  "futures",
- "mcp-error",
+ "mcp-error-rs",
  "serde",
  "serde_json",
  "tokio",
@@ -1115,7 +1115,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcp-error"
+name = "mcp-error-rs"
 version = "0.1.0"
 dependencies = [
  "serde_json",
@@ -1125,7 +1125,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcp-macros"
+name = "mcp-macros-rs"
 version = "0.1.0"
 dependencies = [
  "convert_case 0.8.0",
@@ -1135,13 +1135,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcp-server"
+name = "mcp-server-rs"
 version = "0.1.0"
 dependencies = [
  "futures",
- "mcp-core",
- "mcp-error",
- "mcp-transport",
+ "mcp-core-rs",
+ "mcp-error-rs",
+ "mcp-transport-rs",
  "serde_json",
  "tower-service",
  "tracing",
@@ -1152,14 +1152,14 @@ name = "mcp-tools"
 version = "0.1.0"
 
 [[package]]
-name = "mcp-transport"
+name = "mcp-transport-rs"
 version = "0.1.0"
 dependencies = [
  "async-trait",
  "eventsource-client",
  "futures",
- "mcp-core",
- "mcp-error",
+ "mcp-core-rs",
+ "mcp-error-rs",
  "pin-project",
  "serde_json",
  "service_utils_rs",
@@ -1887,10 +1887,10 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "futures",
- "mcp-core",
- "mcp-error",
- "mcp-server",
- "mcp-transport",
+ "mcp-core-rs",
+ "mcp-error-rs",
+ "mcp-server-rs",
+ "mcp-transport-rs",
  "rand 0.9.1",
  "serde",
  "serde_json",
