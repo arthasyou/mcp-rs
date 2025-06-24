@@ -38,6 +38,7 @@ where
                 }
             }
         }
+        tracing::info!("Server transport closed, exiting run loop");
 
         Ok(())
     }

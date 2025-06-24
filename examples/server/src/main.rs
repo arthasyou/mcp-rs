@@ -10,19 +10,20 @@ use axum::{
     response::{Sse, sse::Event},
     routing::get,
 };
+use common::jsonrpc_frame_codec::JsonRpcFrameCodec;
 use futures::{Stream, StreamExt, TryStreamExt};
 use mcp_server::{router::service::RouterService, server::Server};
 use mcp_transport::server::ByteTransport;
 use tokio::{
-    io::{self, AsyncWriteExt},
-    sync::Mutex,
+    io::{self, AsyncWriteExt, DuplexStream},
+    sync::{Mutex, oneshot},
 };
 use tokio_util::codec::FramedRead;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::common::counter;
 
-type C2SWriter = Arc<Mutex<io::WriteHalf<io::SimplexStream>>>;
+type C2SWriter = Arc<Mutex<DuplexStream>>;
 type SessionId = Arc<str>;
 
 const BIND_ADDRESS: &str = "127.0.0.1:18000";
@@ -102,24 +103,68 @@ async fn sse_handler(State(app): State<App>) -> Sse<impl Stream<Item = Result<Ev
     const BUFFER_SIZE: usize = 1 << 12;
     let session = session_id();
     tracing::debug!(%session, "sse connection");
-    let (c2s_read, c2s_write) = tokio::io::simplex(BUFFER_SIZE);
-    let (s2c_read, s2c_write) = tokio::io::simplex(BUFFER_SIZE);
+    let (c2s_write, c2s_read) = tokio::io::duplex(BUFFER_SIZE);
+    let (s2c_write, s2c_read) = tokio::io::duplex(BUFFER_SIZE);
     app.txs
         .write()
         .await
         .insert(session.clone(), Arc::new(Mutex::new(c2s_write)));
+
+    let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();
+    let session_for_task = session.clone();
+    let txs = app.txs.clone();
+
+    tokio::spawn(async move {
+        let router = RouterService(counter::CounterRouter::new());
+        let server = Server::new(router);
+        let bytes_transport = ByteTransport::new(c2s_read, s2c_write);
+
+        let result = tokio::select! {
+            res = server.run(bytes_transport) => {
+                tracing::info!(%session_for_task, "server.run completed");
+                res
+            },
+            _ = shutdown_rx => {
+                tracing::info!(%session_for_task, "Received shutdown signal");
+                Ok(())
+            }
+        };
+
+        tracing::info!(%session_for_task, "Cleaning up session");
+        txs.write().await.remove(&session_for_task);
+
+        if let Err(e) = result {
+            tracing::error!(?e, "server run error");
+        }
+    });
+
+    use std::{
+        pin::Pin,
+        task::{Context, Poll},
+    };
+
+    use futures::stream::Stream as FuturesStream;
+
+    struct CleanupStream<S> {
+        inner: S,
+        shutdown_tx: Option<oneshot::Sender<()>>,
+    }
+
+    impl<S, T, E> FuturesStream for CleanupStream<S>
+    where
+        S: FuturesStream<Item = Result<T, E>> + Unpin,
     {
-        let session = session.clone();
-        tokio::spawn(async move {
-            let router = RouterService(counter::CounterRouter::new());
-            let server = Server::new(router);
-            let bytes_transport = ByteTransport::new(c2s_read, s2c_write);
-            let _result = server
-                .run(bytes_transport)
-                .await
-                .inspect_err(|e| tracing::error!(?e, "server run error"));
-            app.txs.write().await.remove(&session);
-        });
+        type Item = Result<T, E>;
+
+        fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+            let poll = Pin::new(&mut self.inner).poll_next(cx);
+            if let Poll::Ready(None) = poll {
+                if let Some(tx) = self.shutdown_tx.take() {
+                    let _ = tx.send(());
+                }
+            }
+            poll
+        }
     }
 
     let stream = futures::stream::once(futures::future::ok(
@@ -128,13 +173,19 @@ async fn sse_handler(State(app): State<App>) -> Sse<impl Stream<Item = Result<Ev
             .data(format!("?sessionId={session}")),
     ))
     .chain(
-        FramedRead::new(s2c_read, common::jsonrpc_frame_codec::JsonRpcFrameCodec)
+        FramedRead::new(s2c_read, JsonRpcFrameCodec)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
-            .and_then(move |bytes| match std::str::from_utf8(&bytes) {
+            .and_then(|bytes| match std::str::from_utf8(&bytes) {
                 Ok(message) => futures::future::ok(Event::default().event("message").data(message)),
                 Err(e) => futures::future::err(io::Error::new(io::ErrorKind::InvalidData, e)),
             }),
     );
+
+    let stream = CleanupStream {
+        inner: stream,
+        shutdown_tx: Some(shutdown_tx),
+    };
+
     Sse::new(stream)
 }
 

@@ -232,6 +232,20 @@ dependencies = [
 [[package]]
 name = "client"
 version = "0.1.0"
+dependencies = [
+ "futures",
+ "mcp-client",
+ "mcp-core",
+ "mcp-error",
+ "mcp-transport",
+ "rand 0.9.1",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "tracing-subscriber",
+]
 
 [[package]]
 name = "config"
@@ -1076,6 +1090,15 @@ checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
 [[package]]
 name = "mcp-client"
 version = "0.1.0"
+dependencies = [
+ "futures",
+ "mcp-core",
+ "mcp-error",
+ "mcp-transport",
+ "serde_json",
+ "tower-service",
+ "tracing",
+]
 
 [[package]]
 name = "mcp-core"
@@ -1139,6 +1162,7 @@ dependencies = [
  "serde_json",
  "service_utils_rs",
  "tokio",
+ "tokio-util",
  "tracing",
  "url",
 ]

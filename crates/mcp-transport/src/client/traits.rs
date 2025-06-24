@@ -20,28 +20,28 @@ pub trait ClientTransport: Send + Sync + 'static {
 }
 
 // Helper function that contains the common send implementation
-pub async fn send_message(
-    sender: &mpsc::Sender<TransportMessage>,
-    message: JsonRpcMessage,
-) -> Result<JsonRpcMessage> {
-    match message {
-        JsonRpcMessage::Request(request) => {
-            let (respond_to, response) = oneshot::channel();
-            let msg = TransportMessage {
-                message: JsonRpcMessage::Request(request),
-                response_tx: Some(respond_to),
-            };
-            sender.send(msg).await.map_err(|_| Error::ChannelClosed)?;
-            Ok(response.await.map_err(|_| Error::ChannelClosed)?)
-        }
-        JsonRpcMessage::Notification(notification) => {
-            let msg = TransportMessage {
-                message: JsonRpcMessage::Notification(notification),
-                response_tx: None,
-            };
-            sender.send(msg).await.map_err(|_| Error::ChannelClosed)?;
-            Ok(JsonRpcMessage::Nil)
-        }
-        _ => Err(Error::UnsupportedMessage),
-    }
-}
+// pub async fn send_message(
+//     sender: &mpsc::Sender<TransportMessage>,
+//     message: JsonRpcMessage,
+// ) -> Result<()> {
+//     match message {
+//         JsonRpcMessage::Request(request) => {
+//             let (respond_to, response) = oneshot::channel();
+//             let msg = TransportMessage {
+//                 message: JsonRpcMessage::Request(request),
+//                 response_tx: Some(respond_to),
+//             };
+//             sender.send(msg).await.map_err(|_| Error::ChannelClosed)?;
+//             Ok(response.await.map_err(|_| Error::ChannelClosed)?)
+//         }
+//         JsonRpcMessage::Notification(notification) => {
+//             let msg = TransportMessage {
+//                 message: JsonRpcMessage::Notification(notification),
+//                 response_tx: None,
+//             };
+//             sender.send(msg).await.map_err(|_| Error::ChannelClosed)?;
+//             Ok(JsonRpcMessage::Nil)
+//         }
+//         _ => Err(Error::UnsupportedMessage),
+//     }
+// }

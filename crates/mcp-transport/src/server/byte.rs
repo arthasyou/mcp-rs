@@ -51,7 +51,10 @@ where
         let mut reader = this.reader.as_mut();
         let mut read_future = Box::pin(reader.read_until(b'\n', this.buf));
         match read_future.as_mut().poll(cx) {
-            Poll::Ready(Ok(0)) => Poll::Ready(None),
+            Poll::Ready(Ok(0)) => {
+                tracing::info!("Client closed connection (read 0 bytes)");
+                Poll::Ready(None)
+            }
             Poll::Ready(Ok(_)) => {
                 let line = match String::from_utf8(std::mem::take(this.buf)) {
                     Ok(s) => s,
