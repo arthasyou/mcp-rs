@@ -23,6 +23,17 @@ pub struct JsonRpcRequest {
     pub params: Option<Value>,
 }
 
+impl JsonRpcRequest {
+    pub fn new(id: Option<u64>, method: impl Into<String>, params: Option<Value>) -> Self {
+        Self {
+            jsonrpc: JSONRPC_VERSION_FIELD.to_string(),
+            id,
+            method: method.into(),
+            params,
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct JsonRpcResponse {
     pub jsonrpc: String,
@@ -35,7 +46,7 @@ pub struct JsonRpcResponse {
 }
 
 impl JsonRpcResponse {
-    pub fn new_empty(id: Option<u64>) -> Self {
+    pub fn empty(id: Option<u64>) -> Self {
         Self {
             jsonrpc: JSONRPC_VERSION_FIELD.to_string(),
             id,
@@ -44,12 +55,21 @@ impl JsonRpcResponse {
         }
     }
 
-    pub fn with_error(id: Option<u64>, error: ErrorData) -> Self {
+    pub fn error(id: Option<u64>, error: ErrorData) -> Self {
         Self {
             jsonrpc: JSONRPC_VERSION_FIELD.to_string(),
             id,
             result: None,
             error: Some(error),
+        }
+    }
+
+    pub fn success(id: Option<u64>, result: Value) -> Self {
+        Self {
+            jsonrpc: JSONRPC_VERSION_FIELD.to_string(),
+            id,
+            result: Some(result),
+            error: None,
         }
     }
 }

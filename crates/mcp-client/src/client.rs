@@ -1,4 +1,4 @@
-use mcp_core::protocol::message::JsonRpcMessage;
+use mcp_core::protocol::message::{JsonRpcMessage, JsonRpcRequest};
 use mcp_error::Result;
 use mcp_transport::client::traits::ClientTransport;
 
@@ -17,7 +17,12 @@ where
         Self { transport }
     }
 
-    pub async fn send_request(&mut self, request: JsonRpcMessage) -> Result<JsonRpcMessage> {
-        self.transport.send(request).await
+    pub async fn send(&self, message: JsonRpcMessage) -> Result<JsonRpcMessage> {
+        self.transport.send(message).await
+    }
+
+    pub async fn send_resquest(&self, request: JsonRpcRequest) -> Result<JsonRpcMessage> {
+        let message = JsonRpcMessage::Request(request);
+        self.transport.send(message).await
     }
 }

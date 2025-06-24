@@ -39,7 +39,7 @@ pub trait Router: Send + Sync + 'static {
 
     // Helper method to create base response
     fn create_response(&self, id: Option<u64>) -> JsonRpcResponse {
-        JsonRpcResponse::new_empty(id)
+        JsonRpcResponse::empty(id)
     }
 
     fn handle_initialize(
