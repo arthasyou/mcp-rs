@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/arthasyou/mcp-rs"
+description = "Transport layer for the Model Context Protocol using SSE and POST"
+
 
 [dependencies]
 mcp-core-rs = { version = "0.1.0" }
