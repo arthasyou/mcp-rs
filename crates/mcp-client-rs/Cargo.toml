@@ -7,9 +7,9 @@ repository = "https://github.com/arthasyou/mcp-rs"
 # publish = true
 
 [dependencies]
-mcp-core-rs = { path = "../mcp-core" }
-mcp-error-rs = { path = "../mcp-error-rs" }
-mcp-transport-rs = { path = "../mcp-transport" }
+mcp-core-rs = { version = "0.1.0" }
+mcp-error-rs = { version = "0.1.0" }
+mcp-transport-rs = { version = "0.1.0" }
 
 tower-service = "0.3"
 tracing = { version = "0.1", features = ["std"] }
