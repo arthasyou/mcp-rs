@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/arthasyou/mcp-rs"
-# publish = true
+description = "Client for the Model Context Protocol (MCP) using HTTP and SSE"
 
 [dependencies]
 mcp-core-rs = { version = "0.1.0" }

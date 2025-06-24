@@ -964,6 +964,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
 
 [[package]]
+name = "mcp-client-rs"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "mcp-core-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "mcp-error-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "mcp-transport-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
 name = "mcp-core-rs"
 version = "0.1.0"
 dependencies = [
@@ -1018,6 +1031,26 @@ dependencies = [
 [[package]]
 name = "mcp-transport-rs"
 version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "eventsource-client",
+ "futures",
+ "mcp-core-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "mcp-error-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pin-project",
+ "serde_json",
+ "service_utils_rs",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "mcp-transport-rs"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bb12d64047d68dd000b68779c60b12454a3521bf2fce84bfaaaeaa11323d59bf"
 dependencies = [
  "async-trait",
  "eventsource-client",
