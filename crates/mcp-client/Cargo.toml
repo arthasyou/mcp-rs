@@ -1,12 +1,15 @@
 [package]
-name = "mcp-client"
-version = "0.1.0"
-edition = "2024"
+name = "mcp-client-rs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = true
 
 [dependencies]
-mcp-core = { path = "../mcp-core" }
-mcp-error = { path = "../mcp-error" }
-mcp-transport = { path = "../mcp-transport" }
+mcp-core-rs = { path = "../mcp-core" }
+mcp-error-rs = { path = "../mcp-error" }
+mcp-transport-rs = { path = "../mcp-transport" }
 
 tower-service.workspace = true
 tracing.workspace = true
