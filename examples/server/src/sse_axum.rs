@@ -7,7 +7,7 @@ use axum::{
     routing::get,
 };
 use futures::{Stream, TryStreamExt};
-use mcp_core::protocol::message::JsonRpcMessage;
+use mcp_core::{protocol::message::JsonRpcMessage, utils::CleanupStream};
 use mcp_server::{router::service::RouterService, server::Server};
 use mcp_transport::server::sse::SseTransport;
 use server::common::counter::CounterRouter;
@@ -28,35 +28,6 @@ pub struct App {
 
 fn session_id() -> SessionId {
     Arc::from(format!("{:016x}", rand::random::<u128>()))
-}
-
-use std::{
-    pin::Pin,
-    task::{Context, Poll},
-};
-
-use futures::Stream as FuturesStream;
-
-struct CleanupStream<S> {
-    inner: S,
-    shutdown_tx: Option<tokio::sync::oneshot::Sender<()>>,
-}
-
-impl<S, T, E> FuturesStream for CleanupStream<S>
-where
-    S: FuturesStream<Item = Result<T, E>> + Unpin,
-{
-    type Item = Result<T, E>;
-
-    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let poll = Pin::new(&mut self.inner).poll_next(cx);
-        if let Poll::Ready(None) = poll {
-            if let Some(tx) = self.shutdown_tx.take() {
-                let _ = tx.send(());
-            }
-        }
-        poll
-    }
 }
 
 #[tokio::main]
