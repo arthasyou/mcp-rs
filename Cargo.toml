@@ -4,6 +4,7 @@ members = [
     "crates/mcp-error-rs",
     "crates/mcp-transport-rs",
     "crates/mcp-client-rust",
+    "crates/mcp-server-rs",
 ]
 resolver = "3"
 
