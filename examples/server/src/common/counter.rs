@@ -1,13 +1,13 @@
 use std::{future::Future, pin::Pin, sync::Arc};
 
-use mcp_core::{
+use mcp_core_rs::{
     MimeType, Resource, Tool,
     content::Content,
     prompt::{Prompt, PromptArgument},
     protocol::capabilities::ServerCapabilities,
 };
-use mcp_error::{Error, Result};
-use mcp_server::router::{capabilities::CapabilitiesBuilder, traits::Router};
+use mcp_error_rs::{Error, Result};
+use mcp_server_rs::router::{capabilities::CapabilitiesBuilder, traits::Router};
 use serde_json::Value;
 use tokio::sync::Mutex;
 

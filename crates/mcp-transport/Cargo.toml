@@ -1,21 +1,21 @@
 [package]
 name = "mcp-transport-rs"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-repository.workspace = true
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/arthasyou/mcp-rs"
 
 [dependencies]
 mcp-core-rs = { path = "../mcp-core" }
-mcp-error-rs = { path = "../mcp-error" }
+mcp-error-rs = { path = "../mcp-error-rs" }
 
-pin-project.workspace = true
-tokio = { workspace = true, features = ["full", "io-util"] }
-tokio-util = { workspace = true, features = ["io"] }
-futures.workspace = true
-serde_json.workspace = true
-tracing.workspace = true
-async-trait.workspace = true
-service_utils_rs = { workspace = true }
-eventsource-client.workspace = true
-url.workspace = true
+pin-project = "1"
+tokio = { version = "1", features = ["full", "io-util"] }
+tokio-util = { version = "0.7", features = ["io"] }
+futures = "0.3"
+serde_json = "1"
+tracing = { version = "0.1", features = ["std"] }
+async-trait = "0.1"
+service_utils_rs = { version = "0.3.20", features = ["request"] }
+eventsource-client = "0.15"
+url = "2"

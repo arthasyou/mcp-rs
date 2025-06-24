@@ -9,8 +9,8 @@ use axum::{
     routing::get,
 };
 use futures::{Stream, StreamExt, TryStreamExt};
-use mcp_server::{router::service::RouterService, server::Server};
-use mcp_transport::server::ByteTransport;
+use mcp_server_rs::{router::service::RouterService, server::Server};
+use mcp_transport_rs::server::ByteTransport;
 use server::common::{counter, jsonrpc_frame_codec::JsonRpcFrameCodec};
 use tokio::{
     io::{self, AsyncWriteExt, DuplexStream},

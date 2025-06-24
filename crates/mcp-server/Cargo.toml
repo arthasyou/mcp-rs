@@ -8,7 +8,7 @@ publish = true
 
 [dependencies]
 mcp-core-rs = { path = "../mcp-core" }
-mcp-error-rs = { path = "../mcp-error" }
+mcp-error-rs = { path = "../mcp-error-rs" }
 mcp-transport-rs = { path = "../mcp-transport" }
 
 tower-service.workspace = true

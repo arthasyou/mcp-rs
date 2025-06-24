@@ -7,9 +7,9 @@ use axum::{
     routing::get,
 };
 use futures::{Stream, TryStreamExt};
-use mcp_core::{protocol::message::JsonRpcMessage, utils::CleanupStream};
-use mcp_server::{router::service::RouterService, server::Server};
-use mcp_transport::server::sse::SseTransport;
+use mcp_core_rs::{protocol::message::JsonRpcMessage, utils::CleanupStream};
+use mcp_server_rs::{router::service::RouterService, server::Server};
+use mcp_transport_rs::server::sse::SseTransport;
 use server::common::counter::CounterRouter;
 use tokio::{
     io,
