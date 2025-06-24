@@ -6,8 +6,8 @@ license = "MIT"
 repository = "https://github.com/arthasyou/mcp-rs"
 
 [dependencies]
-mcp-core-rs = { path = "../mcp-core" }
-mcp-error-rs = { path = "../mcp-error-rs" }
+mcp-core-rs = { version = "0.1.0" }
+mcp-error-rs = { version = "0.1.0" }
 
 pin-project = "1"
 tokio = { version = "1", features = ["full", "io-util"] }
