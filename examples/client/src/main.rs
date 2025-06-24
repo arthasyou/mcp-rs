@@ -2,6 +2,7 @@ use mcp_client::client::McpClient;
 use mcp_core::protocol::message::{JsonRpcMessage, JsonRpcRequest};
 use mcp_transport::client::{impls::sse::SseTransport, traits::ClientTransport};
 use serde_json::json;
+use tracing::debug;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
@@ -11,7 +12,11 @@ async fn main() {
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| format!("info,{}=debug", env!("CARGO_CRATE_NAME")).into()),
         )
-        .with(tracing_subscriber::fmt::layer())
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_file(true)
+                .with_line_number(true),
+        )
         .init();
 
     let transport = SseTransport::new("http://localhost:18000/sse");
@@ -29,7 +34,7 @@ async fn main() {
     });
 
     let response = client.send_request(message).await;
-    println!(" ====== example Response: {:?}", response);
+    debug!(" ====== example Response: {:?}", response);
 
     // println!("shutting down transport...");
     // client.transport.close().await.unwrap();

@@ -196,7 +196,11 @@ async fn main() -> io::Result<()> {
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| format!("info,{}=debug", env!("CARGO_CRATE_NAME")).into()),
         )
-        .with(tracing_subscriber::fmt::layer())
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_file(true)
+                .with_line_number(true),
+        )
         .init();
     let listener = tokio::net::TcpListener::bind(BIND_ADDRESS).await?;
 
