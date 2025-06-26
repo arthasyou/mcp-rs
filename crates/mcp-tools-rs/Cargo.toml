@@ -1,0 +1,17 @@
+[package]
+name = "mcp-tools-rs"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/arthasyou/mcp-rs"
+description = "Tools for Model Context Protocol"
+
+[dependencies]
+mcp-core-rs = { version = "0.1.0" }
+mcp-error-rs = { version = "0.1.0" }
+mcp-transport-rs = { version = "0.1.0" }
+mcp-server-rs = { version = "0.1.0" }
+tower-service = "0.3"
+tracing = { version = "0.1", features = ["std"] }
+serde_json = "1"
+futures = "0.3"
