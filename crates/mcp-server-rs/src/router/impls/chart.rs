@@ -80,8 +80,7 @@ impl Router for ChartRouter {
                         .map_err(|e| Error::System(format!("Invalid input: {}", e)))?;
                     let content = serde_json::to_string(&spec)
                         .map_err(|e| Error::System(format!("Serialization error: {}", e)))?;
-                    Ok(vec![])
-                    // Ok(vec![Content::json(content)])
+                    Ok(vec![Content::text(content)])
                 }
                 _ => Err(Error::System(format!("Tool {} not found", tool_name))),
             }
