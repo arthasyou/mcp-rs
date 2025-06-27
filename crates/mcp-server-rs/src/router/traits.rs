@@ -34,10 +34,24 @@ pub trait Router: Send + Sync + 'static {
     }
     fn read_resource(
         &self,
-        uri: &str,
-    ) -> Pin<Box<dyn Future<Output = Result<String>> + Send + 'static>>;
-    fn list_prompts(&self) -> Vec<Prompt>;
-    fn get_prompt(&self, prompt_name: &str) -> PromptFuture;
+        _uri: &str,
+    ) -> Pin<Box<dyn Future<Output = Result<String>> + Send + 'static>> {
+        Box::pin(async move {
+            Err(Error::System(
+                "No resources implemented for this server.".into(),
+            ))
+        })
+    }
+    fn list_prompts(&self) -> Vec<Prompt> {
+        vec![]
+    }
+    fn get_prompt(&self, _prompt_name: &str) -> PromptFuture {
+        Box::pin(async move {
+            Err(Error::System(
+                "No prompts implemented for this server.".into(),
+            ))
+        })
+    }
 
     // Helper method to create base response
     fn create_response(&self, id: Option<u64>) -> JsonRpcResponse {

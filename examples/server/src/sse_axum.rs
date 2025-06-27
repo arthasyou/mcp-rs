@@ -8,9 +8,11 @@ use axum::{
 };
 use futures::{Stream, TryStreamExt};
 use mcp_core_rs::{protocol::message::JsonRpcMessage, utils::CleanupStream};
-use mcp_server_rs::{router::service::RouterService, server::Server};
+use mcp_server_rs::{
+    router::{impls::chart::ChartRouter, service::RouterService},
+    server::Server,
+};
 use mcp_transport_rs::server::sse::SseTransport;
-use server::common::counter::CounterRouter;
 use tokio::{
     io,
     sync::{RwLock, mpsc},
@@ -70,7 +72,7 @@ async fn sse_handler(
     // 启动服务，支持主动清理
     tokio::spawn(async move {
         let transport = SseTransport::new(to_client_tx, to_server_rx);
-        let router = RouterService(CounterRouter::new());
+        let router = RouterService(ChartRouter::new());
         let server = Server::new(router);
 
         let result = tokio::select! {

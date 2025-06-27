@@ -15,10 +15,10 @@ rand = { version = "0.9", features = ["std"] }
 serde.workspace = true
 futures.workspace = true
 serde_json.workspace = true
-mcp-core-rs = { path = "../../crates/mcp-core" }
-mcp-server-rs = { path = "../../crates/mcp-server" }
+mcp-core-rs = { path = "../../crates/mcp-core-rs" }
+mcp-server-rs = { path = "../../crates/mcp-server-rs" }
 mcp-error-rs = { path = "../../crates/mcp-error-rs" }
-mcp-transport-rs = { path = "../../crates/mcp-transport" }
+mcp-transport-rs = { path = "../../crates/mcp-transport-rs" }
 tokio-util = { version = "0.7" }
 tokio-stream = { version = "0.1", features = ["sync"] }
 

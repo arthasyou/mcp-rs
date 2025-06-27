@@ -28,8 +28,13 @@ async fn main() {
         Some(1),
         "tools/call",
         Some(json!({
-            "name": "increment",
-            "arguments": {}
+            "name": "generate_chart",
+            "arguments": {
+                "chart_type": "bar",
+                "title": "Sales Data",
+                "labels": ["Q1", "Q2", "Q3", "Q4"],
+                "values": [100.0, 150.0, 200.0, 250.0]
+            }
         })),
     );
 
