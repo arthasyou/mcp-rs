@@ -6,7 +6,6 @@ use mcp_core_rs::protocol::{
 use mcp_error_rs::{BoxError, Error, Result};
 use mcp_transport_rs::server::traits::ServerTransport;
 use tower_service::Service;
-
 pub struct Server<S> {
     service: S,
 }

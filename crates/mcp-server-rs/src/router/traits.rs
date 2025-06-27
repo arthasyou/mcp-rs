@@ -29,7 +29,9 @@ pub trait Router: Send + Sync + 'static {
         tool_name: &str,
         arguments: Value,
     ) -> Pin<Box<dyn Future<Output = Result<Vec<Content>>> + Send + 'static>>;
-    fn list_resources(&self) -> Vec<Resource>;
+    fn list_resources(&self) -> Vec<Resource> {
+        vec![]
+    }
     fn read_resource(
         &self,
         uri: &str,
