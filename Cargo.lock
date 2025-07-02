@@ -1097,6 +1097,7 @@ dependencies = [
  "mcp-core-rs",
  "mcp-error-rs",
  "mcp-transport-rs",
+ "once_cell",
  "serde_json",
  "tower-service",
  "tracing",

@@ -1,36 +1,10 @@
-# 对应根目录的 Cargo.toml
-# 适用于整个 workspace
+[release]
 workspace = true
-
-# 生成 git tag
-tag = true
-tag-name = "{{version}}"
-
-# 发布前运行 cargo test
-pre-release-hook = ["cargo test --workspace --all-targets"]
-
-# 发布后推送 tag 和代码
-push = true
-
-# 自动发布到 crates.io
-publish = true
-
-# 是否在发布后执行 cargo clean
-# 可按需要设置
-clean = true
-
-# 为每个成员 crate 单独打 tag
-consolidate-commits = true
-consolidate-pushes = true
-
-# 指定发布的分支，防止误操作
-# 可根据实际调整
+publish = false              # 不发 crates.io
+push = false                 # 不 git push
+tag = false                  # 不打 tag
+disable-publish-check = true # 不去 crates.io 检查
+consolidate-commits = false
+consolidate-pushes = false
+clean = false                # 不强制 clean
 allow-branch = ["main"]
-
-# level = "patch" => 0.1.0 -> 0.1.1
-# level = "minor" => 0.1.0 -> 0.2.0
-# level = "major" => 0.1.0 -> 1.0.0
-level = "patch"
-
-# 默认使用 cargo package 文件检查文件
-# 如果需要排除文件可以在 .cargo_vcs_info.json 或 .gitignore 控制
