@@ -1,14 +1,16 @@
 use std::{future::Future, pin::Pin};
 
-use mcp_core_rs::{
-    MimeType, Resource, Tool, content::Content, prompt::Prompt,
-    protocol::capabilities::ServerCapabilities,
-};
-use mcp_error_rs::{Error, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::router::{capabilities::CapabilitiesBuilder, traits::Router};
+use crate::{
+    core::{
+        MimeType, Resource, Tool, content::Content, prompt::Prompt,
+        protocol::capabilities::ServerCapabilities,
+    },
+    error::{Error, Result},
+    router::{capabilities::CapabilitiesBuilder, traits::Router},
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChartSpec {

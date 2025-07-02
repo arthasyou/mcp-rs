@@ -1,4 +1,4 @@
-use mcp_core_rs::protocol::capabilities::{
+use crate::core::protocol::capabilities::{
     PromptsCapability, ResourcesCapability, ServerCapabilities, ToolsCapability,
 };
 

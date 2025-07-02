@@ -3,15 +3,17 @@ use std::{
     task::{Context, Poll},
 };
 
-use mcp_core_rs::protocol::{
-    constants::INVALID_REQUEST,
-    error::ErrorData,
-    message::{JsonRpcRequest, JsonRpcResponse},
-};
 use mcp_error_rs::BoxError;
 use tower_service::Service;
 
-use crate::router::traits::Router;
+use crate::{
+    core::protocol::{
+        constants::INVALID_REQUEST,
+        error::ErrorData,
+        message::{JsonRpcRequest, JsonRpcResponse},
+    },
+    router::traits::Router,
+};
 
 pub struct RouterService<T>(pub T);
 
