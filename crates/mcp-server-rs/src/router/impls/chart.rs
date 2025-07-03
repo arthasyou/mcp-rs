@@ -1,5 +1,4 @@
-use std::{future::Future, pin::Pin};
-
+use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -33,6 +32,7 @@ impl ChartRouter {
     }
 }
 
+#[async_trait]
 impl Router for ChartRouter {
     fn name(&self) -> String {
         "chart".to_string()
@@ -69,53 +69,47 @@ impl Router for ChartRouter {
         )]
     }
 
-    fn call_tool(
-        &self,
-        tool_name: &str,
-        arguments: Value,
-    ) -> Pin<Box<dyn Future<Output = Result<Vec<Content>>> + Send + 'static>> {
+    async fn call_tool(&self, tool_name: &str, arguments: Value) -> Result<Vec<Content>> {
         let tool_name = tool_name.to_string();
-        Box::pin(async move {
-            match tool_name.as_str() {
-                "generate_chart" => {
-                    let spec: ChartSpec = serde_json::from_value(arguments)
-                        .map_err(|e| Error::System(format!("Invalid input: {}", e)))?;
-                    let content = serde_json::to_string(&spec)
-                        .map_err(|e| Error::System(format!("Serialization error: {}", e)))?;
-                    Ok(vec![Content::text(content)])
-                }
-                _ => Err(Error::System(format!("Tool {} not found", tool_name))),
+        match tool_name.as_str() {
+            "generate_chart" => {
+                let spec: ChartSpec = serde_json::from_value(arguments)
+                    .map_err(|e| Error::System(format!("Invalid input: {}", e)))?;
+                let content = serde_json::to_string(&spec)
+                    .map_err(|e| Error::System(format!("Serialization error: {}", e)))?;
+                Ok(vec![Content::text(content)])
             }
-        })
+            _ => Err(Error::System(format!("Tool {} not found", tool_name))),
+        }
     }
 
     fn list_resources(&self) -> Vec<Resource> {
         vec![]
     }
 
-    fn read_resource(
-        &self,
-        _uri: &str,
-    ) -> Pin<Box<dyn Future<Output = Result<String>> + Send + 'static>> {
-        Box::pin(async move {
-            Err(Error::System(
-                "No resources implemented for chart router.".into(),
-            ))
-        })
-    }
+    // fn read_resource(
+    //     &self,
+    //     _uri: &str,
+    // ) -> Pin<Box<dyn Future<Output = Result<String>> + Send + 'static>> {
+    //     Box::pin(async move {
+    //         Err(Error::System(
+    //             "No resources implemented for chart router.".into(),
+    //         ))
+    //     })
+    // }
 
     fn list_prompts(&self) -> Vec<Prompt> {
         vec![]
     }
 
-    fn get_prompt(
-        &self,
-        _prompt_name: &str,
-    ) -> Pin<Box<dyn Future<Output = Result<String>> + Send + 'static>> {
-        Box::pin(async move {
-            Err(Error::System(
-                "No prompts implemented for chart router.".into(),
-            ))
-        })
-    }
+    // fn get_prompt(
+    //     &self,
+    //     _prompt_name: &str,
+    // ) -> Pin<Box<dyn Future<Output = Result<String>> + Send + 'static>> {
+    //     Box::pin(async move {
+    //         Err(Error::System(
+    //             "No prompts implemented for chart router.".into(),
+    //         ))
+    //     })
+    // }
 }

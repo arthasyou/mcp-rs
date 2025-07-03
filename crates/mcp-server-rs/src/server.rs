@@ -1,30 +1,25 @@
-use tower_service::Service;
-
 use crate::{
     core::protocol::{
         constants::{INTERNAL_ERROR, INVALID_REQUEST, PARSE_ERROR},
         error::ErrorData,
         message::{JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse},
     },
-    error::{BoxError, Error, Result},
+    error::{Error, Result},
+    router::traits::Router,
     transport::server::traits::ServerTransport,
 };
-pub struct Server<S> {
-    service: S,
+
+pub struct Server {
+    router: Box<dyn Router>,
 }
 
-impl<S> Server<S>
-where
-    S: Service<JsonRpcRequest, Response = JsonRpcResponse> + Send,
-    S::Error: Into<BoxError>,
-    S::Future: Send,
-{
-    pub fn new(service: S) -> Self {
-        Self { service }
+impl Server {
+    pub fn new(router: Box<dyn Router>) -> Self {
+        Self { router }
     }
 
-    pub async fn run(self, mut transport: impl ServerTransport) -> Result<()> {
-        let mut service = self.service;
+    pub async fn run(mut self, mut transport: impl ServerTransport) -> Result<()> {
+        let router = &mut *self.router;
 
         tracing::info!("Server started");
         while let Some(msg_result) = transport.read_message().await {
@@ -33,7 +28,7 @@ where
 
             match msg_result {
                 Ok(msg) => {
-                    Self::handle_message(&mut service, &mut transport, msg).await?;
+                    Self::handle_message(router, &mut transport, msg).await?;
                 }
                 Err(e) => {
                     Self::handle_error(&mut transport, e).await?;
@@ -46,13 +41,13 @@ where
     }
 
     async fn handle_message(
-        service: &mut S,
+        router: &mut dyn Router,
         transport: &mut impl ServerTransport,
         msg: JsonRpcMessage,
     ) -> Result<()> {
         match msg {
             JsonRpcMessage::Request(request) => {
-                let response = Self::process_request(service, request).await;
+                let response = Self::process_request(router, request).await;
                 Self::send_response(transport, response).await?;
             }
             JsonRpcMessage::Response(_)
@@ -65,7 +60,7 @@ where
         Ok(())
     }
 
-    async fn process_request(service: &mut S, request: JsonRpcRequest) -> JsonRpcResponse {
+    async fn process_request(router: &dyn Router, request: JsonRpcRequest) -> JsonRpcResponse {
         let id = request.id;
         let request_json = serde_json::to_string(&request)
             .unwrap_or_else(|_| "Failed to serialize request".to_string());
@@ -77,10 +72,29 @@ where
             "Received request"
         );
 
-        match service.call(request).await {
+        let result = match request.method.as_str() {
+            "initialize" => router.handle_initialize(request).await,
+            "tools/list" => router.handle_tools_list(request).await,
+            "tools/call" => router.handle_tools_call(request).await,
+            "resources/list" => router.handle_resources_list(request).await,
+            "resources/read" => router.handle_resources_read(request).await,
+            "prompts/list" => router.handle_prompts_list(request).await,
+            "prompts/get" => router.handle_prompts_get(request).await,
+            _ => {
+                let mut response = router.create_response(id);
+                response.error = Some(ErrorData {
+                    code: INVALID_REQUEST,
+                    message: format!("Method '{}' not found", request.method),
+                    data: None,
+                });
+                return response;
+            }
+        };
+
+        match result {
             Ok(resp) => resp,
             Err(e) => {
-                let error_msg = e.into().to_string();
+                let error_msg = e.to_string();
                 tracing::error!(error = %error_msg, "Request processing failed");
                 JsonRpcResponse {
                     jsonrpc: "2.0".to_string(),
