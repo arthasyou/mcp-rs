@@ -1,6 +1,8 @@
-use mcp_core_rs::protocol::message::{JsonRpcMessage, JsonRpcRequest};
-use mcp_error_rs::Result;
-use mcp_transport_rs::client::traits::ClientTransport;
+use crate::{
+    core::protocol::message::{JsonRpcMessage, JsonRpcRequest},
+    error::Result,
+    transport::traits::ClientTransport,
+};
 
 pub struct McpClient<T>
 where

@@ -3,11 +3,13 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use mcp_error_rs::{Error, Result};
-use mcp_transport_rs::client::{impls::sse::SseTransport, traits::ClientTransport};
 use once_cell::sync::Lazy;
 
-use crate::client::McpClient;
+use crate::{
+    client::McpClient,
+    error::{Error, Result},
+    transport::{impls::sse::SseTransport, traits::ClientTransport},
+};
 
 /// MCP Client Registry
 #[derive(Default)]

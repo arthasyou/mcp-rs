@@ -6,7 +6,7 @@ use crate::{
     },
     error::{Error, Result},
     router::{ext::RouterExt, traits::Router},
-    transport::server::traits::ServerTransport,
+    transport::traits::ServerTransport,
 };
 
 pub struct Server {
