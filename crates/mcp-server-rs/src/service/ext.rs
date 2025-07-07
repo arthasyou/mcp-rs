@@ -14,10 +14,10 @@ use mcp_core_rs::{
 use mcp_error_rs::{Error, Result};
 use serde_json::Value;
 
-use crate::service::traits::Router;
+use crate::service::traits::Service;
 
 #[async_trait]
-pub trait RouterExt: Router {
+pub trait ServiceExt: Service {
     // Helper method to create base response
     fn create_response(&self, id: Option<u64>) -> JsonRpcResponse {
         JsonRpcResponse::empty(id)
@@ -269,4 +269,4 @@ pub trait RouterExt: Router {
     // 可继续添加 handle_tools_call, handle_resources_read, handle_prompts_get 等
 }
 
-impl<T: Router + ?Sized> RouterExt for T {}
+impl<T: Service + ?Sized> ServiceExt for T {}

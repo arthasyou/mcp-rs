@@ -12,7 +12,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     error::{Error, Result},
-    service::{capabilities::CapabilitiesBuilder, traits::Router},
+    service::{capabilities::CapabilitiesBuilder, traits::Service},
 };
 
 #[derive(Clone)]
@@ -50,7 +50,7 @@ impl CounterRouter {
 }
 
 #[async_trait]
-impl Router for CounterRouter {
+impl Service for CounterRouter {
     fn name(&self) -> String {
         "counter".to_string()
     }

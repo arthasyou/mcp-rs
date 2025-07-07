@@ -5,16 +5,16 @@ use crate::{
         message::{JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse},
     },
     error::{Error, Result},
-    service::{ext::RouterExt, traits::Router},
+    service::{ext::ServiceExt, traits::Service},
     transport::traits::ServerTransport,
 };
 
 pub struct Server {
-    router: Box<dyn Router>,
+    router: Box<dyn Service>,
 }
 
 impl Server {
-    pub fn new(router: Box<dyn Router>) -> Self {
+    pub fn new(router: Box<dyn Service>) -> Self {
         Self { router }
     }
 
@@ -41,7 +41,7 @@ impl Server {
     }
 
     async fn handle_message(
-        router: &mut dyn Router,
+        router: &mut dyn Service,
         transport: &mut impl ServerTransport,
         msg: JsonRpcMessage,
     ) -> Result<()> {
@@ -60,7 +60,7 @@ impl Server {
         Ok(())
     }
 
-    async fn process_request(router: &dyn Router, request: JsonRpcRequest) -> JsonRpcResponse {
+    async fn process_request(router: &dyn Service, request: JsonRpcRequest) -> JsonRpcResponse {
         let id = request.id;
         let request_json = serde_json::to_string(&request)
             .unwrap_or_else(|_| "Failed to serialize request".to_string());

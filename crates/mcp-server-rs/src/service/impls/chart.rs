@@ -8,7 +8,7 @@ use crate::{
         protocol::capabilities::ServerCapabilities,
     },
     error::{Error, Result},
-    service::{capabilities::CapabilitiesBuilder, traits::Router},
+    service::{capabilities::CapabilitiesBuilder, traits::Service},
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -33,7 +33,7 @@ impl ChartRouter {
 }
 
 #[async_trait]
-impl Router for ChartRouter {
+impl Service for ChartRouter {
     fn name(&self) -> String {
         "chart".to_string()
     }

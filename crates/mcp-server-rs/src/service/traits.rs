@@ -6,7 +6,7 @@ use mcp_error_rs::{Error, Result};
 use serde_json::Value;
 
 #[async_trait]
-pub trait Router: Send + Sync {
+pub trait Service: Send + Sync {
     fn name(&self) -> String;
 
     fn instructions(&self) -> String;
