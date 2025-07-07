@@ -1,5 +1,5 @@
-pub mod router;
 pub mod server;
+pub mod service;
 
 pub use mcp_core_rs as core;
 pub use mcp_error_rs as error;

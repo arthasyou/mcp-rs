@@ -5,7 +5,7 @@ use crate::{
         message::{JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse},
     },
     error::{Error, Result},
-    router::{ext::RouterExt, traits::Router},
+    service::{ext::RouterExt, traits::Router},
     transport::traits::ServerTransport,
 };
 

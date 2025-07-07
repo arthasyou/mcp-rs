@@ -14,7 +14,7 @@ use mcp_core_rs::{
 use mcp_error_rs::{Error, Result};
 use serde_json::Value;
 
-use crate::router::traits::Router;
+use crate::service::traits::Router;
 
 #[async_trait]
 pub trait RouterExt: Router {

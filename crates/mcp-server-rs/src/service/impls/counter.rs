@@ -12,7 +12,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     error::{Error, Result},
-    router::{capabilities::CapabilitiesBuilder, traits::Router},
+    service::{capabilities::CapabilitiesBuilder, traits::Router},
 };
 
 #[derive(Clone)]
