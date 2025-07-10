@@ -19,6 +19,7 @@ mcp-core-rs = { path = "../../crates/mcp-core-rs" }
 mcp-server-rs = { path = "../../crates/mcp-server-rs" }
 mcp-error-rs = { path = "../../crates/mcp-error-rs" }
 mcp-transport-rs = { path = "../../crates/mcp-transport-rs" }
+mcp-tools-rs = { path = "../../crates/mcp-tools-rs" }
 tokio-util = { version = "0.7" }
 tokio-stream = { version = "0.1", features = ["sync"] }
 

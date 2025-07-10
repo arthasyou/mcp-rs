@@ -87,6 +87,12 @@ impl Service for ChartRouter {
         vec![]
     }
 
+    async fn read_resource(&self, _uri: &str) -> Result<String> {
+        Err(Error::System(
+            "No resources implemented for chart router.".into(),
+        ))
+    }
+
     // fn read_resource(
     //     &self,
     //     _uri: &str,
@@ -112,4 +118,10 @@ impl Service for ChartRouter {
     //         ))
     //     })
     // }
+
+    async fn get_prompt(&self, _prompt_name: &str) -> Result<String> {
+        Err(Error::System(
+            "No prompts implemented for chart router.".into(),
+        ))
+    }
 }

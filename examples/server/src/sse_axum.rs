@@ -8,10 +8,8 @@ use axum::{
 };
 use futures::{Stream, TryStreamExt};
 use mcp_core_rs::{protocol::message::JsonRpcMessage, utils::CleanupStream};
-use mcp_server_rs::{
-    router::{impls::chart::ChartRouter, service::RouterService},
-    server::Server,
-};
+use mcp_server_rs::server::Server;
+use mcp_tools_rs::service::oss::OssService;
 use mcp_transport_rs::server::sse::SseTransport;
 use tokio::{
     io,
@@ -72,7 +70,15 @@ async fn sse_handler(
     // 启动服务，支持主动清理
     tokio::spawn(async move {
         let transport = SseTransport::new(to_client_tx, to_server_rx);
-        let router = RouterService(ChartRouter::new());
+        let router = OssService::new(
+            "http://127.0.0.1:9000".to_string(), // endpoint
+            "ROOTNAME".to_string(),              // access_key
+            "CHANGEME123".to_string(),           // secret_key
+            "test-bucket".to_string(),           // bucket_name
+        )
+        .await
+        .expect("Failed to create OssService");
+        let router = Box::new(router);
         let server = Server::new(router);
 
         let result = tokio::select! {

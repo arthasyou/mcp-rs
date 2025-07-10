@@ -10,7 +10,7 @@ description = "Tools for Model Context Protocol"
 mcp-core-rs = { version = "0.1.0" }
 mcp-error-rs = { version = "0.1.0" }
 mcp-transport-rs = { version = "0.1.0" }
-mcp-server-rs = { version = "0.1.0" }
+mcp-server-rs = { path = "../mcp-server-rs" }
 tower-service = "0.3"
 tracing = { version = "0.1", features = ["std"] }
 serde = { version = "1", features = ["derive"] }
@@ -20,6 +20,8 @@ scraper = "0.23"
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12" }
 urlencoding = { version = "2" }
+async-trait = "0.1"
+rust-s3 = "0.35"
 # csv = { version = "1" }
 # calamine = { version = "0.28" }
 # lopdf = { version = "0.36" }
