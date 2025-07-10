@@ -29,6 +29,11 @@ impl McpClientRegistry {
             Error::System(format!("MCP client not found for server_id: {}", server_id))
         })
     }
+
+    pub fn list_keys(&self) -> Vec<String> {
+        let map = self.clients.lock().unwrap();
+        map.keys().cloned().collect()
+    }
 }
 
 /// Global MCP client registry
