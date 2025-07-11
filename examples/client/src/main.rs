@@ -19,7 +19,7 @@ async fn main() {
         )
         .init();
 
-    let transport = SseTransport::new("http://localhost:18000/sse");
+    let transport = SseTransport::new("http://localhost:18000/sse?service=chart");
     transport.start().await.unwrap();
     debug!("Starting MCP Client Example");
     // sleep(std::time::Duration::from_secs(1)); // Wait for the transport to start
