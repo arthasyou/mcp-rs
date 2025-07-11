@@ -7,7 +7,7 @@ members = [
     "crates/mcp-server-rs",
     "crates/mcp-tools-rs",
     "examples/server",
-    # "examples/client",
+    "examples/client",
 ]
 resolver = "3"
 

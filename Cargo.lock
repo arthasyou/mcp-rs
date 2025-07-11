@@ -270,6 +270,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "client"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "mcp-client-rust",
+ "mcp-core-rs",
+ "mcp-error-rs",
+ "mcp-transport-rs",
+ "rand 0.9.1",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "config"
 version = "0.15.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
