@@ -17,5 +17,4 @@ serde_json.workspace = true
 mcp-core-rs = { path = "../../crates/mcp-core-rs" }
 mcp-client-rs = { package = "mcp-client-rust", path = "../../crates/mcp-client-rust" }
 mcp-error-rs = { path = "../../crates/mcp-error-rs" }
-mcp-transport-rs = { path = "../../crates/mcp-transport-rs" }
 tokio-util = { version = "0.7" }

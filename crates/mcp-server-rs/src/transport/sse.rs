@@ -5,7 +5,7 @@ use mcp_core_rs::protocol::message::JsonRpcMessage;
 use mcp_error_rs::{Error, Result};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
-use crate::server::traits::ServerTransport;
+use crate::transport::traits::ServerTransport;
 
 /// A transport that wraps an SSE-style message sender
 pub struct SseTransport {

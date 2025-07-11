@@ -10,7 +10,7 @@ use mcp_error_rs::{Error, Result};
 use pin_project::pin_project;
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader};
 
-use crate::server::traits::ServerTransport;
+use crate::transport::traits::ServerTransport;
 
 #[pin_project]
 /// A transport that reads and writes JSON-RPC messages over byte streams.

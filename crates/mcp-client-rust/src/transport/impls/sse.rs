@@ -15,7 +15,7 @@ use tokio_util::sync::CancellationToken;
 use tracing::{self, warn};
 use url::Url;
 
-use crate::client::{message::PendingRequests, traits::ClientTransport};
+use crate::transport::{message::PendingRequests, traits::ClientTransport};
 
 pub struct SseTransport {
     sse_url: String,

@@ -9,7 +9,6 @@ description = "Tools for Model Context Protocol"
 [dependencies]
 mcp-core-rs = { version = "0.1.0" }
 mcp-error-rs = { version = "0.1.0" }
-mcp-transport-rs = { version = "0.1.0" }
 mcp-server-rs = { path = "../mcp-server-rs" }
 tower-service = "0.3"
 tracing = { version = "0.1", features = ["std"] }

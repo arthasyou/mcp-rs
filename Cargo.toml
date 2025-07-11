@@ -2,7 +2,6 @@
 members = [
     "crates/mcp-core-rs",
     "crates/mcp-error-rs",
-    "crates/mcp-transport-rs",
     "crates/mcp-client-rust",
     "crates/mcp-server-rs",
     "crates/mcp-tools-rs",

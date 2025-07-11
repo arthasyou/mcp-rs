@@ -8,9 +8,8 @@ use axum::{
 };
 use futures::{Stream, TryStreamExt};
 use mcp_core_rs::{protocol::message::JsonRpcMessage, utils::CleanupStream};
-use mcp_server_rs::server::Server;
+use mcp_server_rs::{server::Server, transport::sse::SseTransport};
 use mcp_tools_rs::service::oss::OssService;
-use mcp_transport_rs::server::sse::SseTransport;
 use tokio::{
     io,
     sync::{RwLock, mpsc},

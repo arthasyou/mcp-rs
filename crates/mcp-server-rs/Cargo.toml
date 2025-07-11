@@ -9,7 +9,6 @@ description = "Server for the Model Context Protocol (MCP) using HTTP and SSE"
 [dependencies]
 mcp-core-rs = { version = "0.1.0" }
 mcp-error-rs = { version = "0.1.0" }
-mcp-transport-rs = { version = "0.1.0" }
 
 tower-service = "0.3"
 tracing = { version = "0.1", features = ["std"] }
@@ -18,3 +17,4 @@ serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 futures = "0.3"
 async-trait = "0.1"
+pin-project = "1"
