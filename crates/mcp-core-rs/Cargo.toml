@@ -1,6 +1,7 @@
 [package]
 name = "mcp-core-rs"
 description = "Core types for Model Context Protocol"
+publish = false
 version.workspace = true
 edition.workspace = true
 license.workspace = true

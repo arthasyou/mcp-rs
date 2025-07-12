@@ -1,6 +1,7 @@
 [package]
 name = "mcp-client-rust"
 description = "Client for the Model Context Protocol (MCP) using HTTP and SSE"
+publish = false
 version.workspace = true
 edition.workspace = true
 license.workspace = true
