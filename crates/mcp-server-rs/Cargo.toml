@@ -7,9 +7,9 @@ repository = "https://github.com/arthasyou/mcp-rs"
 description = "Server for the Model Context Protocol (MCP) using HTTP and SSE"
 
 [dependencies]
+mcp-error.workspace = true
 mcp-core.workspace = true
 
-thiserror.workspace = true
 tracing = { workspace = true, features = ["std"] }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

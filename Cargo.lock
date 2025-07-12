@@ -1207,11 +1207,11 @@ dependencies = [
  "eventsource-client",
  "futures",
  "mcp-core-rs",
+ "mcp-error-rs",
  "once_cell",
  "serde",
  "serde_json",
  "service_utils_rs",
- "thiserror 2.0.12",
  "tokio",
  "tokio-util",
  "tower-service",
@@ -1226,10 +1226,20 @@ dependencies = [
  "base64 0.22.1",
  "chrono",
  "futures",
+ "mcp-error-rs",
  "serde",
  "serde_json",
- "thiserror 2.0.12",
  "tokio",
+ "url",
+]
+
+[[package]]
+name = "mcp-error-rs"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "service_utils_rs",
+ "thiserror 2.0.12",
  "url",
 ]
 
@@ -1240,10 +1250,10 @@ dependencies = [
  "async-trait",
  "futures",
  "mcp-core-rs",
+ "mcp-error-rs",
  "pin-project",
  "serde",
  "serde_json",
- "thiserror 2.0.12",
  "tokio",
  "tracing",
 ]
@@ -1255,6 +1265,7 @@ dependencies = [
  "async-trait",
  "futures",
  "mcp-core-rs",
+ "mcp-error-rs",
  "mcp-server-rs",
  "reqwest",
  "rust-s3",

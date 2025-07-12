@@ -6,7 +6,7 @@ members = [
     "crates/mcp-client-rust",
     "crates/mcp-server-rs",
     "crates/mcp-tools-rs",
-
+    "crates/mcp-error-rs",
 ]
 
 exclude = ["examples/server", "examples/client"]

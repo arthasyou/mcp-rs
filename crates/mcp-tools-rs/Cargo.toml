@@ -7,8 +7,10 @@ repository = "https://github.com/arthasyou/mcp-rs"
 description = "Tools for Model Context Protocol"
 
 [dependencies]
+mcp-error.workspace = true
 mcp-core.workspace = true
 mcp-server.workspace = true
+
 
 scraper = { version = "0.23" }
 reqwest = { version = "0.12" }
