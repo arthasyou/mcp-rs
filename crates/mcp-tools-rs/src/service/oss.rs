@@ -1,11 +1,11 @@
 use async_trait::async_trait;
-use mcp_core_rs::{
-    MimeType, Resource, Tool, content::Content, protocol::capabilities::ServerCapabilities,
-};
 use s3::{Bucket, Region, creds::Credentials};
 use serde_json::Value;
 
 use crate::{
+    core::{
+        MimeType, Resource, Tool, content::Content, protocol::capabilities::ServerCapabilities,
+    },
     error::{Error, Result},
     server::service::{capabilities::CapabilitiesBuilder, traits::Service},
 };

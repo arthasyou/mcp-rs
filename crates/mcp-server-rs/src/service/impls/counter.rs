@@ -1,16 +1,16 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use mcp_core_rs::{
-    MimeType, Resource, Tool,
-    content::Content,
-    prompt::{Prompt, PromptArgument},
-    protocol::capabilities::ServerCapabilities,
-};
 use serde_json::Value;
 use tokio::sync::Mutex;
 
 use crate::{
+    core::{
+        MimeType, Resource, Tool,
+        content::Content,
+        prompt::{Prompt, PromptArgument},
+        protocol::capabilities::ServerCapabilities,
+    },
     error::{Error, Result},
     service::{capabilities::CapabilitiesBuilder, traits::Service},
 };

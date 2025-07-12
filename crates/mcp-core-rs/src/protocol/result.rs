@@ -3,8 +3,9 @@ use serde::{Deserialize, Serialize};
 use crate::{
     Resource, ResourceContents, Tool,
     content::Content,
+    error::Error,
     prompt::{Prompt, PromptMessage},
-    protocol::capabilities::ServerCapabilities,
+    protocol::{capabilities::ServerCapabilities, message::JsonRpcMessage},
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -15,6 +16,23 @@ pub struct InitializeResult {
     pub server_info: Implementation,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub instructions: Option<String>,
+}
+
+impl TryFrom<JsonRpcMessage> for InitializeResult {
+    type Error = Error;
+    fn try_from(message: JsonRpcMessage) -> Result<Self, Self::Error> {
+        match message {
+            JsonRpcMessage::Response(response) => {
+                if let Some(result) = response.result {
+                    if let Ok(tools_vec) = serde_json::from_value::<Self>(result.clone()) {
+                        return Ok(tools_vec);
+                    }
+                }
+                Err(Self::Error::System("Failed to parse tools".into()))
+            }
+            _ => Err(Self::Error::System("Unexpected response type".into())),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

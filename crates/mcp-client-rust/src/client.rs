@@ -1,11 +1,16 @@
 use std::sync::atomic::{AtomicU64, Ordering};
 
-use mcp_core_rs::Tool;
 use serde_json::json;
 
 use crate::{
-    core::protocol::message::{JsonRpcMessage, JsonRpcRequest},
-    error::{Error, Result},
+    core::{
+        Tool,
+        protocol::{
+            message::{JsonRpcMessage, JsonRpcRequest},
+            result::InitializeResult,
+        },
+    },
+    error::Result,
     transport::traits::ClientTransport,
 };
 
@@ -41,30 +46,16 @@ where
         self.transport.send(message).await
     }
 
-    pub async fn initialize(&self) -> Result<JsonRpcMessage> {
+    pub async fn initialize(&self) -> Result<InitializeResult> {
         let request = JsonRpcRequest::new(Some(self.next_id()), "initialize", None);
-        self.send_resquest(request).await
+        let response = self.send_resquest(request).await?.try_into()?;
+        Ok(response)
     }
 
     pub async fn get_tools(&self) -> Result<Vec<Tool>> {
         let request = JsonRpcRequest::new(Some(self.next_id()), "tools/list", None);
-        let response = self.send_resquest(request).await?;
-
-        match response {
-            JsonRpcMessage::Response(result) => {
-                if let Some(tools_value) = result.result {
-                    if let Some(tools_array) = tools_value.get("tools") {
-                        if let Ok(tools_vec) =
-                            serde_json::from_value::<Vec<Tool>>(tools_array.clone())
-                        {
-                            return Ok(tools_vec);
-                        }
-                    }
-                }
-                Err(Error::System("Failed to parse tools".into()))
-            }
-            _ => Err(Error::System("Unexpected response type".into())),
-        }
+        let response = self.send_resquest(request).await?.try_into()?;
+        Ok(response)
     }
 
     pub async fn call_tool(&self, params: serde_json::Value) -> Result<JsonRpcMessage> {

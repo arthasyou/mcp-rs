@@ -1,6 +1,6 @@
 use async_trait::async_trait;
-use mcp_core_rs::protocol::message::JsonRpcMessage;
-use mcp_error_rs::Result;
+
+use crate::{core::protocol::message::JsonRpcMessage, error::Result};
 
 #[async_trait]
 pub trait ServerTransport: Send + Sync {

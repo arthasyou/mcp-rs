@@ -3,8 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use eventsource_client::{Client as SseClient, SSE};
 use futures::TryStreamExt;
-use mcp_core_rs::protocol::message::JsonRpcMessage;
-use mcp_error_rs::{Error, Result};
+use mcp_core::protocol::message::JsonRpcMessage;
 use serde_json::{self};
 use service_utils_rs::utils::Request;
 use tokio::{
@@ -15,7 +14,10 @@ use tokio_util::sync::CancellationToken;
 use tracing::{self, warn};
 use url::Url;
 
-use crate::transport::{message::PendingRequests, traits::ClientTransport};
+use crate::{
+    error::{Error, Result},
+    transport::{message::PendingRequests, traits::ClientTransport},
+};
 
 pub struct SseTransport {
     sse_url: String,

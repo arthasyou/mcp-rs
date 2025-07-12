@@ -1,8 +1,9 @@
-use mcp_error_rs::{Error, Result};
-
-use crate::protocol::{
-    constants::{JSONRPC_EXPECTED_VERSION, JSONRPC_VERSION_FIELD},
-    message::JsonRpcMessage,
+use crate::{
+    error::{Error, Result},
+    protocol::{
+        constants::{JSONRPC_EXPECTED_VERSION, JSONRPC_VERSION_FIELD},
+        message::JsonRpcMessage,
+    },
 };
 
 /// Parses a JSON-RPC message from a string, validating structure and version.

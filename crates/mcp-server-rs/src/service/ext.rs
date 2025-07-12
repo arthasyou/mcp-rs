@@ -1,20 +1,22 @@
 use async_trait::async_trait;
-use mcp_core_rs::{
-    ResourceContents,
-    content::Content,
-    prompt::{PromptMessage, PromptMessageRole},
-    protocol::{
-        message::{JsonRpcRequest, JsonRpcResponse},
-        result::{
-            CallToolResult, GetPromptResult, Implementation, InitializeResult, ListPromptsResult,
-            ListResourcesResult, ListToolsResult, ReadResourceResult,
-        },
-    },
-};
-use mcp_error_rs::{Error, Result};
 use serde_json::Value;
 
-use crate::service::traits::Service;
+use crate::{
+    core::{
+        ResourceContents,
+        content::Content,
+        prompt::{PromptMessage, PromptMessageRole},
+        protocol::{
+            message::{JsonRpcRequest, JsonRpcResponse},
+            result::{
+                CallToolResult, GetPromptResult, Implementation, InitializeResult,
+                ListPromptsResult, ListResourcesResult, ListToolsResult, ReadResourceResult,
+            },
+        },
+    },
+    error::{Error, Result},
+    service::traits::Service,
+};
 
 #[async_trait]
 pub trait ServiceExt: Service {

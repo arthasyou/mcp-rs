@@ -5,12 +5,14 @@ use std::{
 
 use async_trait::async_trait;
 use futures::{Stream, stream::StreamExt};
-use mcp_core_rs::{protocol::message::JsonRpcMessage, utils::parse_json_rpc_message};
-use mcp_error_rs::{Error, Result};
 use pin_project::pin_project;
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader};
 
-use crate::transport::traits::ServerTransport;
+use crate::{
+    core::{protocol::message::JsonRpcMessage, utils::parse_json_rpc_message},
+    error::{Error, Result},
+    transport::traits::ServerTransport,
+};
 
 #[pin_project]
 /// A transport that reads and writes JSON-RPC messages over byte streams.
@@ -63,7 +65,8 @@ where
                         return Poll::Ready(Some(Err(Error::Utf8(e))));
                     }
                 };
-                Poll::Ready(Some(parse_json_rpc_message(&line)))
+                let rpc_message = parse_json_rpc_message(&line)?;
+                Poll::Ready(Some(Ok(rpc_message)))
             }
             Poll::Ready(Err(e)) => Poll::Ready(Some(Err(Error::Io(e)))),
             Poll::Pending => Poll::Pending,

@@ -7,14 +7,13 @@ repository = "https://github.com/arthasyou/mcp-rs"
 description = "Server for the Model Context Protocol (MCP) using HTTP and SSE"
 
 [dependencies]
-mcp-core-rs = { version = "0.1.0" }
-mcp-error-rs = { version = "0.1.0" }
+mcp-core.workspace = true
 
-tower-service = "0.3"
-tracing = { version = "0.1", features = ["std"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1"
-tokio = { version = "1", features = ["full"] }
-futures = "0.3"
-async-trait = "0.1"
-pin-project = "1"
+thiserror.workspace = true
+tracing = { workspace = true, features = ["std"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+futures = { workspace = true }
+async-trait.workspace = true
+pin-project.workspace = true

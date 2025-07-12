@@ -1,6 +1,7 @@
-use mcp_error_rs::{Error, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+
+use crate::error::{Error, Result};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SummaryInput {

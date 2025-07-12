@@ -3,6 +3,11 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use crate::{
+    error::{Error, Result},
+    protocol::message::JsonRpcMessage,
+};
+
 /// A tool that can be used by a model.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -26,6 +31,27 @@ impl Tool {
             name: name.into(),
             description: description.into(),
             input_schema,
+        }
+    }
+}
+
+impl TryFrom<JsonRpcMessage> for Vec<Tool> {
+    type Error = Error;
+    fn try_from(value: JsonRpcMessage) -> Result<Self> {
+        match value {
+            JsonRpcMessage::Response(result) => {
+                if let Some(tools_value) = result.result {
+                    if let Some(tools_array) = tools_value.get("tools") {
+                        if let Ok(tools_vec) =
+                            serde_json::from_value::<Vec<Tool>>(tools_array.clone())
+                        {
+                            return Ok(tools_vec);
+                        }
+                    }
+                }
+                Err(Error::System("Failed to parse tools".into()))
+            }
+            _ => Err(Error::System("Unexpected response type".into())),
         }
     }
 }

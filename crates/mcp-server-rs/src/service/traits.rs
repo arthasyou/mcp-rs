@@ -1,9 +1,13 @@
 use async_trait::async_trait;
-use mcp_core_rs::{
-    Resource, Tool, content::Content, prompt::Prompt, protocol::capabilities::ServerCapabilities,
-};
-use mcp_error_rs::{Error, Result};
 use serde_json::Value;
+
+use crate::{
+    core::{
+        Resource, Tool, content::Content, prompt::Prompt,
+        protocol::capabilities::ServerCapabilities,
+    },
+    error::{Error, Result},
+};
 
 #[async_trait]
 pub trait Service: Send + Sync {

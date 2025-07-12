@@ -1,14 +1,15 @@
 [workspace]
+resolver = "3"
+
 members = [
     "crates/mcp-core-rs",
-    "crates/mcp-error-rs",
     "crates/mcp-client-rust",
     "crates/mcp-server-rs",
     "crates/mcp-tools-rs",
-    "examples/server",
-    "examples/client",
+
 ]
-resolver = "3"
+
+exclude = ["examples/server", "examples/client"]
 
 [workspace.package]
 edition = "2024"
@@ -41,3 +42,10 @@ tower = "0.5"
 tower-service = "0.3"
 service_utils_rs = { version = "0.3.20", features = ["request"] }
 eventsource-client = { version = "0.15" }
+rust-s3 = "0.35"
+
+mcp-error = { package = "mcp-error-rs", path = "crates/mcp-error-rs" }
+mcp-core = { package = "mcp-core-rs", path = "crates/mcp-core-rs" }
+mcp-client = { package = "mcp-client-rust", path = "crates/mcp-client-rust" }
+mcp-server = { package = "mcp-server-rs", path = "crates/mcp-server-rs" }
+mcp-tools = { package = "mcp-tools-rs", path = "crates/mcp-tools-rs" }

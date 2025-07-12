@@ -1,10 +1,10 @@
 use base64::engine::{Engine, general_purpose::STANDARD as BASE64_STANDARD};
-use mcp_error_rs::{Error, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::{
     Annotation, ResourceContents,
     content::{EmbeddedResource, ImageContent},
+    error::{Error, Result},
 };
 
 /// A prompt that can be used to generate text from a model

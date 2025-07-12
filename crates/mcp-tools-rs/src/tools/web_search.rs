@@ -1,9 +1,10 @@
-use mcp_error_rs::{Error, Result};
 use reqwest::Client;
 use scraper::{Html, Selector};
 use serde::Serialize;
 use serde_json::Value;
 use urlencoding::decode;
+
+use crate::error::{Error, Result};
 
 #[derive(Serialize)]
 pub struct SearchResult {

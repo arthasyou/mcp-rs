@@ -1,9 +1,11 @@
 use chrono::{DateTime, Utc};
-use mcp_error_rs::{Error, Result};
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::Annotation;
+use crate::{
+    Annotation,
+    error::{Error, Result},
+};
 
 const EPSILON: f32 = 1e-6; // Tolerance for floating point comparison
 
