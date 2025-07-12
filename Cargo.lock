@@ -1201,7 +1201,7 @@ dependencies = [
 
 [[package]]
 name = "mcp-client-rust"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-trait",
  "eventsource-client",
@@ -1221,7 +1221,7 @@ dependencies = [
 
 [[package]]
 name = "mcp-core-rs"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "base64 0.22.1",
  "chrono",
@@ -1235,7 +1235,7 @@ dependencies = [
 
 [[package]]
 name = "mcp-error-rs"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde_json",
  "service_utils_rs",
@@ -1245,7 +1245,7 @@ dependencies = [
 
 [[package]]
 name = "mcp-server-rs"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-trait",
  "futures",
@@ -1260,7 +1260,7 @@ dependencies = [
 
 [[package]]
 name = "mcp-tools-rs"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-trait",
  "futures",

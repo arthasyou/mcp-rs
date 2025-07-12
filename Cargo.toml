@@ -13,7 +13,7 @@ exclude = ["examples/server", "examples/client"]
 
 [workspace.package]
 edition = "2024"
-version = "0.1.0"
+version = "0.1.1"
 license = "MIT"
 repository = "https://github.com/arthasyou/mcp-rs"
 description = "Rust MCP"
@@ -44,8 +44,8 @@ service_utils_rs = { version = "0.3.20", features = ["request"] }
 eventsource-client = { version = "0.15" }
 rust-s3 = "0.35"
 
-mcp-error = { package = "mcp-error-rs", path = "crates/mcp-error-rs", version = "0.1.0" }
-mcp-core = { package = "mcp-core-rs", path = "crates/mcp-core-rs", version = "0.1.0" }
-mcp-client = { package = "mcp-client-rust", path = "crates/mcp-client-rust", version = "0.1.0" }
-mcp-server = { package = "mcp-server-rs", path = "crates/mcp-server-rs", version = "0.1.0" }
-mcp-tools = { package = "mcp-tools-rs", path = "crates/mcp-tools-rs", version = "0.1.0" }
+mcp-error = { package = "mcp-error-rs", path = "crates/mcp-error-rs", version = "0.1.1" }
+mcp-core = { package = "mcp-core-rs", path = "crates/mcp-core-rs", version = "0.1.1" }
+mcp-client = { package = "mcp-client-rust", path = "crates/mcp-client-rust", version = "0.1.1" }
+mcp-server = { package = "mcp-server-rs", path = "crates/mcp-server-rs", version = "0.1.1" }
+mcp-tools = { package = "mcp-tools-rs", path = "crates/mcp-tools-rs", version = "0.1.1" }
