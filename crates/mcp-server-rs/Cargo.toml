@@ -1,10 +1,10 @@
 [package]
 name = "mcp-server-rs"
-version = "0.1.0"
-edition = "2024"
-license = "MIT"
-repository = "https://github.com/arthasyou/mcp-rs"
 description = "Server for the Model Context Protocol (MCP) using HTTP and SSE"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
 
 [dependencies]
 mcp-error.workspace = true

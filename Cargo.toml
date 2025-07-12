@@ -13,7 +13,7 @@ exclude = ["examples/server", "examples/client"]
 
 [workspace.package]
 edition = "2024"
-version = "0.1.0"
+version = "0.1.1"
 license = "MIT"
 repository = "https://github.com/arthasyou/mcp-rs"
 description = "Rust MCP"
