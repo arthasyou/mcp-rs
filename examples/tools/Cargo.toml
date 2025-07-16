@@ -1,16 +1,19 @@
 [package]
 name = "tools"
-edition.workspace = true
-version.workspace = true
-license.workspace = true
-repository.workspace = true
-description.workspace = true
+edition = "2024"
+version = "0.1.1"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
 serde_json = "1"
 mcp-tools-rs = { path = "../../crates/mcp-tools-rs" }
+minio = { version = "0.3" }
+anyhow = "1.0"
 
 [[example]]
 name = "web_search"
-path = "src/web_search.rs"
+path = "examples/web_search.rs"
+
+[[example]]
+name = "s3"
+path = "examples/s3_read.rs"

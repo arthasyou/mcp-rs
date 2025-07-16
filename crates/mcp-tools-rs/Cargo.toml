@@ -11,7 +11,6 @@ mcp-error.workspace = true
 mcp-core.workspace = true
 mcp-server.workspace = true
 
-
 scraper = { version = "0.23" }
 reqwest = { version = "0.12" }
 urlencoding = { version = "2" }
@@ -22,4 +21,6 @@ serde.workspace = true
 serde_json.workspace = true
 futures.workspace = true
 tokio.workspace = true
-rust-s3.workspace = true
+model-gateway-rs.workspace = true
+minio.workspace = true
+service_utils_rs = { workspace = true, features = ["request"] }

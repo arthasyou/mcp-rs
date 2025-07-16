@@ -9,7 +9,7 @@ members = [
     "crates/mcp-error-rs",
 ]
 
-exclude = ["examples/server", "examples/client"]
+exclude = ["examples"]
 
 [workspace.package]
 edition = "2024"
@@ -42,7 +42,8 @@ tower = "0.5"
 tower-service = "0.3"
 service_utils_rs = { version = "0.3.20", features = ["request"] }
 eventsource-client = { version = "0.15" }
-rust-s3 = "0.35"
+model-gateway-rs = { path = "/Users/ancient/src/rust/model-gateway-rs" }
+minio = { version = "0.3" }
 
 mcp-error = { package = "mcp-error-rs", path = "crates/mcp-error-rs", version = "0.1.1" }
 mcp-core = { package = "mcp-core-rs", path = "crates/mcp-core-rs", version = "0.1.1" }

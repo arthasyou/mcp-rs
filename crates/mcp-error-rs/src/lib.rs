@@ -48,6 +48,12 @@ pub enum Error {
 
     #[error("config error: {0}")]
     ServiceError(#[from] service_utils_rs::error::Error),
+
+    #[error("model error: {0}")]
+    ModelError(#[from] model_gateway_rs::error::Error),
+
+    #[error("S3 error: {0}")]
+    MinioError(#[from] minio::s3::error::Error),
 }
 
 pub type Result<T> = core::result::Result<T, Error>;
