@@ -8,7 +8,7 @@ use serde_json::{self};
 use service_utils_rs::utils::Request;
 use tokio::{
     spawn,
-    sync::{RwLock, oneshot},
+    sync::{RwLock, oneshot, mpsc},
 };
 use tokio_util::sync::CancellationToken;
 use tracing::{self, warn};
@@ -19,12 +19,52 @@ use crate::{
     transport::{message::PendingRequests, traits::ClientTransport},
 };
 
+/// Callback type for handling server-pushed messages (notifications)
+pub type MessageHandler = Box<dyn Fn(JsonRpcMessage) + Send + Sync>;
+
+/// SSE Transport implementation that supports both synchronous request/response
+/// and asynchronous server-pushed notifications.
+/// 
+/// # Examples
+/// 
+/// ## Synchronous callback handler
+/// ```no_run
+/// # use mcp_client_rust::transport::impls::sse::SseTransport;
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let transport = SseTransport::new("http://localhost:3000/sse");
+/// transport.set_message_handler(|msg| {
+///     println!("Received notification: {:?}", msg);
+/// }).await;
+/// # Ok(())
+/// # }
+/// ```
+/// 
+/// ## Asynchronous message receiver
+/// ```no_run
+/// # use mcp_client_rust::transport::impls::sse::SseTransport;
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let transport = SseTransport::new("http://localhost:3000/sse");
+/// if let Some(mut receiver) = transport.take_message_receiver().await {
+///     tokio::spawn(async move {
+///         while let Some(msg) = receiver.recv().await {
+///             // Handle server-pushed notifications
+///         }
+///     });
+/// }
+/// # Ok(())
+/// # }
+/// ```
 pub struct SseTransport {
     sse_url: String,
     post_endpoint: Arc<RwLock<Option<String>>>,
     pending_requests: Arc<PendingRequests>,
     request: Request,
     shutdown: CancellationToken,
+    /// Optional handler for server-pushed messages (notifications)
+    message_handler: Arc<RwLock<Option<MessageHandler>>>,
+    /// Channel for receiving server-pushed messages asynchronously
+    message_receiver: Arc<RwLock<Option<mpsc::UnboundedReceiver<JsonRpcMessage>>>>,
+    message_sender: mpsc::UnboundedSender<JsonRpcMessage>,
 }
 
 impl SseTransport {
@@ -33,13 +73,41 @@ impl SseTransport {
         request
             .set_default_headers(vec![("Content-Type", "application/json".to_string())])
             .unwrap();
+        let (tx, rx) = mpsc::unbounded_channel();
         Self {
             sse_url: sse_url.to_owned(),
             post_endpoint: Arc::new(RwLock::new(None)),
             pending_requests: Arc::new(PendingRequests::default()),
             request,
             shutdown: CancellationToken::new(),
+            message_handler: Arc::new(RwLock::new(None)),
+            message_receiver: Arc::new(RwLock::new(Some(rx))),
+            message_sender: tx,
         }
+    }
+
+    /// Set a handler for server-pushed messages (notifications)
+    pub async fn set_message_handler<F>(&self, handler: F)
+    where
+        F: Fn(JsonRpcMessage) + Send + Sync + 'static,
+    {
+        *self.message_handler.write().await = Some(Box::new(handler));
+    }
+
+    /// Remove the message handler
+    pub async fn clear_message_handler(&self) {
+        *self.message_handler.write().await = None;
+    }
+
+    /// Get a receiver for server-pushed messages (notifications)
+    /// This allows async handling of messages
+    pub async fn take_message_receiver(&self) -> Option<mpsc::UnboundedReceiver<JsonRpcMessage>> {
+        self.message_receiver.write().await.take()
+    }
+
+    /// Get a clone of the message sender (for sending notifications to receivers)
+    pub fn get_message_sender(&self) -> mpsc::UnboundedSender<JsonRpcMessage> {
+        self.message_sender.clone()
     }
 
     async fn get_post_endpoint(&self) -> Result<String> {
@@ -70,9 +138,11 @@ impl ClientTransport for SseTransport {
         let pending_requests = self.pending_requests.clone();
         let post_endpoint = self.post_endpoint.clone();
         let shutdown = self.shutdown.clone();
+        let message_handler = self.message_handler.clone();
+        let message_sender = self.message_sender.clone();
         spawn(async move {
             tokio::select! {
-                _ = handle_messages_loop(sse_url, pending_requests, post_endpoint, shutdown.clone()) => {},
+                _ = handle_messages_loop(sse_url, pending_requests, post_endpoint, message_handler, message_sender, shutdown.clone()) => {},
                 _ = shutdown.cancelled() => {},
             }
         });
@@ -126,6 +196,8 @@ async fn handle_messages_loop(
     sse_url: String,
     pending_requests: Arc<PendingRequests>,
     post_endpoint: Arc<RwLock<Option<String>>>,
+    message_handler: Arc<RwLock<Option<MessageHandler>>>,
+    message_sender: mpsc::UnboundedSender<JsonRpcMessage>,
     shutdown: CancellationToken,
 ) {
     loop {
@@ -133,6 +205,8 @@ async fn handle_messages_loop(
             sse_url.clone(),
             pending_requests.clone(),
             post_endpoint.clone(),
+            message_handler.clone(),
+            message_sender.clone(),
             shutdown.clone(),
         )
         .await;
@@ -155,6 +229,8 @@ async fn handle_messages_once(
     sse_url: String,
     pending_requests: Arc<PendingRequests>,
     post_endpoint: Arc<RwLock<Option<String>>>,
+    message_handler: Arc<RwLock<Option<MessageHandler>>>,
+    message_sender: mpsc::UnboundedSender<JsonRpcMessage>,
     shutdown: CancellationToken,
 ) -> Result<()> {
     let client = match eventsource_client::ClientBuilder::for_url(&sse_url) {
@@ -202,6 +278,19 @@ async fn handle_messages_once(
                                     JsonRpcMessage::Error(error) => {
                                         if let Some(id) = &error.id {
                                             pending_requests.respond(&id.to_string(), message).await;
+                                        }
+                                    }
+                                    JsonRpcMessage::Notification(_) => {
+                                        // Handle server-pushed notifications asynchronously
+                                        // First, call the sync handler if set
+                                        let handler_guard = message_handler.read().await;
+                                        if let Some(handler) = handler_guard.as_ref() {
+                                            handler(message.clone());
+                                        }
+                                        
+                                        // Then, send through the channel for async handling
+                                        if let Err(e) = message_sender.send(message) {
+                                            tracing::debug!("Failed to send notification through channel: {}", e);
                                         }
                                     }
                                     _ => {}
