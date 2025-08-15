@@ -1,4 +1,7 @@
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{
+    Arc,
+    atomic::{AtomicU64, Ordering},
+};
 
 use serde_json::json;
 
@@ -11,39 +14,59 @@ use crate::{
         },
     },
     error::Result,
-    transport::traits::ClientTransport,
+    transport::traits::{Connectable, NotifyChannel, RequestSender},
 };
 
-pub struct McpClient<T>
-where
-    T: ClientTransport + Send + Sync + 'static,
-{
-    pub transport: T,
+pub struct McpClient {
+    sender: Option<Arc<dyn RequestSender>>,
+    notifier: Option<Arc<dyn NotifyChannel>>,
+    connection: Option<Arc<dyn Connectable>>,
     id_counter: AtomicU64,
 }
 
-impl<T> McpClient<T>
-where
-    T: ClientTransport + Send + Sync + 'static,
-{
-    pub fn new(transport: T) -> Self {
+impl McpClient {
+    pub fn new() -> Self {
         Self {
-            transport,
+            sender: None,
+            notifier: None,
+            connection: None,
             id_counter: AtomicU64::new(1),
         }
     }
 
+    pub fn with_request_sender(mut self, sender: Arc<dyn RequestSender>) -> Self {
+        self.sender = Some(sender);
+        self
+    }
+
+    pub fn with_notify_channel(mut self, notifier: Arc<dyn NotifyChannel>) -> Self {
+        self.notifier = Some(notifier);
+        self
+    }
+
+    pub fn with_connectable(mut self, connection: Arc<dyn Connectable>) -> Self {
+        self.connection = Some(connection);
+        self
+    }
+}
+
+impl McpClient {
     fn next_id(&self) -> u64 {
         self.id_counter.fetch_add(1, Ordering::Relaxed)
     }
 
     pub async fn send(&self, message: JsonRpcMessage) -> Result<JsonRpcMessage> {
-        self.transport.send(message).await
+        match &self.sender {
+            Some(sender) => sender.send(message).await,
+            None => Err(crate::error::Error::System(
+                "RequestSender not available".into(),
+            )),
+        }
     }
 
     pub async fn send_resquest(&self, request: JsonRpcRequest) -> Result<JsonRpcMessage> {
         let message = JsonRpcMessage::Request(request);
-        self.transport.send(message).await
+        self.send(message).await
     }
 
     pub async fn initialize(&self) -> Result<InitializeResult> {

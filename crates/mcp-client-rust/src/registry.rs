@@ -8,22 +8,21 @@ use once_cell::sync::Lazy;
 use crate::{
     client::McpClient,
     error::{Error, Result},
-    transport::{impls::sse::SseTransport, traits::ClientTransport},
 };
 
 /// MCP Client Registry
 #[derive(Default)]
 pub struct McpClientRegistry {
-    clients: Mutex<HashMap<String, Arc<McpClient<SseTransport>>>>,
+    clients: Mutex<HashMap<String, Arc<McpClient>>>,
 }
 
 impl McpClientRegistry {
-    pub fn register(&self, server_id: &str, client: Arc<McpClient<SseTransport>>) {
+    pub fn register(&self, server_id: &str, client: Arc<McpClient>) {
         let mut map = self.clients.lock().unwrap();
         map.insert(server_id.to_string(), client);
     }
 
-    pub fn get(&self, server_id: &str) -> Result<Arc<McpClient<SseTransport>>> {
+    pub fn get(&self, server_id: &str) -> Result<Arc<McpClient>> {
         let map = self.clients.lock().unwrap();
         map.get(server_id).cloned().ok_or_else(|| {
             Error::System(format!("MCP client not found for server_id: {}", server_id))
@@ -46,10 +45,10 @@ pub fn get_mcp_registry() -> &'static McpClientRegistry {
 
 /// Initialize and register a default MCP client
 pub async fn register_mcp_clients(configs: Vec<(&str, &str)>) -> Result<()> {
-    for (server_id, url) in configs {
-        let transport = SseTransport::new(url);
-        transport.start().await?;
-        let client = Arc::new(McpClient::new(transport));
+    for (server_id, _url) in configs {
+        // let transport = SseTransport::new(url);
+        // transport.start().await?;
+        let client = Arc::new(McpClient::new());
         get_mcp_registry().register(server_id, client);
     }
     Ok(())

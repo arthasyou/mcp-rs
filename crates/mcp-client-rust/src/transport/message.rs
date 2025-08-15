@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use mcp_core::protocol::message::JsonRpcMessage;
 use tokio::sync::{RwLock, oneshot};
 
+/// MessageHandler 是一个线程安全的通知消息处理函数类型
+pub type MessageHandler = Box<dyn Fn(JsonRpcMessage) + Send + Sync + 'static>;
 /// A message that can be sent through the transport
 #[derive(Debug)]
 pub struct TransportMessage {
