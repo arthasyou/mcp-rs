@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use mcp_core::protocol::message::JsonRpcMessage;
 
-use crate::{error::Result, transport::message::MessageHandler};
+use crate::{error::Result, transport::types::MessageHandler};
 
 #[async_trait]
 pub trait RequestSender: Send + Sync + 'static {
